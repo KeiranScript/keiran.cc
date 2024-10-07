@@ -49,17 +49,10 @@ export default function FileUpload() {
 
       const data = await response.json()
       setUploadedFileUrl(data.url)
-      toast({
-        title: "File uploaded successfully",
-        description: "Your file is now available at the provided URL.",
-      })
+      toast.success("File uploaded successfully. Your file is now available at the provided URL.");
     } catch (error) {
       console.error('Upload error:', error)
-      toast({
-        title: "Upload failed",
-        description: "There was an error uploading your file. Please try again.",
-        variant: "destructive",
-      })
+      toast.error("There was an error uploading your file. Please try again.");
     } finally {
       setUploading(false)
       setFile(null)
@@ -109,3 +102,4 @@ export default function FileUpload() {
     </Card>
   )
 }
+
