@@ -4,8 +4,8 @@ import path from 'path'
 import crypto from 'crypto'
 
 const rateLimit = {
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5 // limit each IP to 5 requests per windowMs
+  windowMs: 1000, // 1s
+  max: 1
 }
 
 const rateLimiter = new Map()
@@ -38,12 +38,9 @@ export async function POST(request: NextRequest) {
   const randomName = crypto.randomBytes(4).toString('hex') + originalExtension
   const filePath = path.join(process.cwd(), 'public', 'uploads', randomName)
 
-  console.log('Saving file to:', filePath)
-
   try {
     await writeFile(filePath, buffer)
     const fileUrl = `/api/${randomName}`
-    console.log('File saved. URL:', fileUrl)
     return NextResponse.json({ url: fileUrl })
   } catch (error) {
     console.error('Error saving file:', error)

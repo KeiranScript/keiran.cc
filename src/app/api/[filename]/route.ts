@@ -10,28 +10,20 @@ export async function GET(
   const filename = params.filename
   const filePath = path.join(process.cwd(), 'public', 'uploads', filename)
 
-  console.log('Requested file:', filename)
-  console.log('File path:', filePath)
+  console.log('File uploaded:', filePath)
+  console.log(request)
 
   try {
-    // Check if the file exists
     await stat(filePath)
   } catch (error) {
-    console.error('File not found:', filePath)
-    // If the file doesn't exist, return a 404 response
     return new NextResponse('File not found', { status: 404 })
   }
 
-  // Determine the content type based on the file extension
   const ext = path.extname(filename).toLowerCase()
   const contentType = getContentType(ext)
 
-  console.log('Content type:', contentType)
-
-  // Create a readable stream from the file
   const fileStream = createReadStream(filePath)
 
-  // Return the file as a stream
   return new NextResponse(fileStream as any, {
     headers: {
       'Content-Type': contentType,
@@ -49,7 +41,6 @@ function getContentType(ext: string): string {
     '.pdf': 'application/pdf',
     '.doc': 'application/msword',
     '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    // Add more content types as needed
   }
 
   return contentTypes[ext] || 'application/octet-stream'
