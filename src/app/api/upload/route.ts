@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
   const now = Date.now()
   const windowStart = now - rateLimit.windowMs
 
-  const requestCount = rateLimiter.get(ip) || []
-  const requestsInWindow = requestCount.filter(timestamp => timestamp > windowStart)
+  const requestCount: number[] = rateLimiter.get(ip) || []
+  const requestsInWindow = requestCount.filter((timestamp: number) => timestamp > windowStart)
 
   if (requestsInWindow.length >= rateLimit.max) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
