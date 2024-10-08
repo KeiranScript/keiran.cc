@@ -8,16 +8,15 @@ const rateLimit = {
   max: 5 // limit each IP to 5 requests per windowMs
 }
 
-const rateLimiter = new Map<string, number[]>()
+const rateLimiter = new Map()
 
 export async function POST(request: NextRequest) {
   const ip = request.ip ?? '127.0.0.1'
   const now = Date.now()
   const windowStart = now - rateLimit.windowMs
 
-  // Type the requestCount to ensure proper typing
-  const requestCount: number[] = rateLimiter.get(ip) || []
-  const requestsInWindow = requestCount.filter((timestamp: number) => timestamp > windowStart)
+  const requestCount = rateLimiter.get(ip) || []
+  const requestsInWindow = requestCount.filter(timestamp => timestamp > windowStart)
 
   if (requestsInWindow.length >= rateLimit.max) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
@@ -39,13 +38,15 @@ export async function POST(request: NextRequest) {
   const randomName = crypto.randomBytes(4).toString('hex') + originalExtension
   const filePath = path.join(process.cwd(), 'public', 'uploads', randomName)
 
+  console.log('Saving file to:', filePath)
+
   try {
     await writeFile(filePath, buffer)
-    const fileUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${randomName}`
+    const fileUrl = `/api/${randomName}`
+    console.log('File saved. URL:', fileUrl)
     return NextResponse.json({ url: fileUrl })
   } catch (error) {
     console.error('Error saving file:', error)
     return NextResponse.json({ error: 'Error saving file' }, { status: 500 })
   }
 }
-

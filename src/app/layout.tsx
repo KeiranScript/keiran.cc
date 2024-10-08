@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'AnonHost',
-  description: 'Upload and share files easily',
+  description: 'Upload your files, anonymously.',
 }
 
 export default function RootLayout({
@@ -26,7 +26,9 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <div className="relative flex min-h-screen flex-col">
             <Navbar />
-            <div className="flex-1">{children}</div>
+            <main className="flex-1 container mx-auto px-4 py-8">
+              {children}
+            </main>
           </div>
           <Toaster />
         </ThemeProvider>
