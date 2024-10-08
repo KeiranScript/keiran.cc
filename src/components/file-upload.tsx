@@ -55,7 +55,7 @@ export default function FileUpload() {
 
       // Set toast message and description for success
       setToastMessage('File uploaded successfully')
-      setToastDescription('Your file is now available at the provided URL.')
+      setToastDescription('Visit the link to access your file!')
     } catch (error) {
       console.error('Upload error:', error)
 

@@ -41,7 +41,6 @@ export default function FileUrlDisplay({ url }: FileUrlDisplayProps) {
 
   return (
     <div className="mt-4 p-4 bg-muted rounded-lg">
-      <h3 className="text-lg font-semibold mb-2">Uploaded File URL:</h3>
       <div className="flex items-center space-x-2">
         <Input value={fullUrl} readOnly className="flex-grow" />
         <Button onClick={copyToClipboard} disabled={copying}>
