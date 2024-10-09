@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createReadStream } from 'fs'
 import { stat } from 'fs/promises'
 import path from 'path'
 
 export async function GET(
+  request: NextRequest,
   { params }: { params: { filename: string } }
 ) {
   const filename = params.filename
