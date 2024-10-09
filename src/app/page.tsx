@@ -1,21 +1,20 @@
-"use client"; // Add this line
+"use client";
 
 import { useEffect, useState } from 'react';
 import FileUpload from '@/components/file-upload';
 
 export default function Home() {
-  const [animateClass, setAnimateClass] = useState('opacity-0 translate-y-10'); // Initial class for animation
-  const [paragraphClass, setParagraphClass] = useState('opacity-0 translate-y-10'); // Initial class for paragraph animation
+  const [animateClass, setAnimateClass] = useState('opacity-0 translate-y-10');
+  const [paragraphClass, setParagraphClass] = useState('opacity-0 translate-y-10');
 
-  // Animate elements on load
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimateClass('opacity-100 translate-y-0 transition-transform duration-500');
-    }, 100); // Delay before main animation starts
+    }, 100);
 
     const paragraphTimer = setTimeout(() => {
       setParagraphClass('opacity-100 translate-y-0 transition-transform duration-500');
-    }, 600); // Delay for paragraph to appear after main content
+    }, 600);
 
     return () => {
       clearTimeout(timer);

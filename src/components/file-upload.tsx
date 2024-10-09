@@ -59,7 +59,7 @@ export default function FileUpload() {
         formData.append('file', chunk);
         formData.append('chunkIndex', String(uploadedChunks));
         formData.append('totalChunks', String(totalChunks));
-        formData.append('filename', file.name);  // Add filename for chunk reference
+        formData.append('filename', file.name);
 
         const response = await fetch('/api/upload-chunk', {
           method: 'POST',
