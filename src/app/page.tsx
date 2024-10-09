@@ -15,3 +15,21 @@ export default function Home() {
     </div>
   )
 }
+
+export const metadata = {
+  title: 'AnonHost',
+  description: 'Upload your files anonymously. Free, forever.',
+  openGraph: {
+    type: 'website',
+    url: 'https://keiran.cc',
+    title: 'AnonHost',
+    description: 'Upload your files anonymously. Free, forever.',
+    images: [
+      {
+        url: 'https://keiran.cc/profile.gif', // Replace with your image URL
+        alt: 'Gif',
+      },
+    ],
+  },
+};
+

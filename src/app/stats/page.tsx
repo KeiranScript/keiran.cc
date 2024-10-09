@@ -95,7 +95,6 @@ const StatsContent = ({ stats }: { stats: any }) => {
           </CardContent>
         </Card>
       </motion.div>
-
       <style jsx>{`
         .glow {
           position: relative;
@@ -106,7 +105,6 @@ const StatsContent = ({ stats }: { stats: any }) => {
             0 0 30px rgba(255, 255, 255, 0.3);
           transition: text-shadow 0.3s ease;
         }
-
         .glow:hover {
           text-shadow: 
             0 0 15px rgba(255, 255, 255, 1), 
@@ -144,8 +142,8 @@ const getStats = async () => {
     return {
       totalFiles: 0,
       usedStorage: 0,
-      availableStorage: 0, // Set default value if fetching fails
-      totalStorage: 0,     // Set default value if fetching fails
+      availableStorage: 0,
+      totalStorage: 0,
     };
   }
 };
