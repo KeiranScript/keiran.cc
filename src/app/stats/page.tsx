@@ -144,8 +144,8 @@ const getStats = async () => {
     return {
       totalFiles: 0,
       usedStorage: 0,
-      availableStorage: TOTAL_STORAGE,
-      totalStorage: TOTAL_STORAGE,
+      availableStorage: 0, // Set default value if fetching fails
+      totalStorage: 0,     // Set default value if fetching fails
     };
   }
 };
