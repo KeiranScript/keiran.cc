@@ -11,6 +11,7 @@ import { Progress } from '@/components/ui/progress'
 import FileUrlDisplay from '@/components/file-url-display'
 
 const MAX_FILE_SIZE = 1024 * 1024 * 1024 // 1GB in bytes
+const CHUNK_SIZE = 1024 * 1024 * 10 // 10MB in bytes
 
 export default function FileUpload() {
   const [file, setFile] = useState<File | null>(null)
@@ -43,47 +44,75 @@ export default function FileUpload() {
   })
 
   const handleUpload = async () => {
-    if (!file) return
+    if (!file) return;
 
-    setUploading(true)
-    setUploadProgress(0)
+    setUploading(true);
+    setUploadProgress(0);
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
+      const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+      let uploadedChunks = 0;
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
+      for (let start = 0; start < file.size; start += CHUNK_SIZE) {
+        const chunk = file.slice(start, start + CHUNK_SIZE);
+        const formData = new FormData();
+        formData.append('file', chunk);
+        formData.append('chunkIndex', String(uploadedChunks));
+        formData.append('totalChunks', String(totalChunks));
+        formData.append('filename', file.name);  // Add filename for chunk reference
 
-      if (!response.ok) {
-        throw new Error('Upload failed')
+        const response = await fetch('/api/upload-chunk', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          // Log detailed error
+          const errorResponse = await response.json();
+          console.error('Upload error:', errorResponse);
+          throw new Error('Chunk upload failed');
+        }
+
+        uploadedChunks++;
+        setUploadProgress((uploadedChunks / totalChunks) * 100);
       }
 
-      const data = await response.json()
-      setUploadedFileUrl(data.url)
+      // Finalizing upload after all chunks
+      const finalizeResponse = await fetch('/api/upload-finalize', {
+        method: 'POST',
+        body: JSON.stringify({ filename: file.name }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-      setUploadSuccess(true)
-      setButtonLabel('Uploaded')
-      setToastMessage('File uploaded successfully')
-      setToastDescription('Visit the link to access your file!')
+      if (!finalizeResponse.ok) {
+        const errorResponse = await finalizeResponse.json();
+        console.error('Finalization error:', errorResponse);
+        throw new Error('Upload finalization failed');
+      }
+
+      const data = await finalizeResponse.json();
+      setUploadedFileUrl(data.url);
+      setUploadSuccess(true);
+      setButtonLabel('Uploaded');
+      setToastMessage('File uploaded successfully');
+      setToastDescription('Visit the link to access your file!');
 
       setTimeout(() => {
-        setButtonLabel('Upload')
-        setUploadSuccess(false)
-      }, 1000)
+        setButtonLabel('Upload');
+        setUploadSuccess(false);
+      }, 1000);
+
     } catch (error) {
-      console.error('Upload error:', error)
-      setToastMessage('Upload failed')
-      setToastDescription('There was an error uploading your file. Please try again.')
+      console.error('Upload error:', error);
+      setToastMessage('Upload failed');
+      setToastDescription('There was an error uploading your file. Please try again.');
     } finally {
-      setUploading(false)
-      setFile(null)
-      router.refresh()
-      setShowToast(true)
+      setUploading(false);
+      setFile(null);
+      router.refresh();
+      setShowToast(true);
     }
-  }
+  };
 
   useEffect(() => {
     if (showToast) {
