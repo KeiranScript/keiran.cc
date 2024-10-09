@@ -16,7 +16,6 @@ export default function FileUrlDisplay({ url }: FileUrlDisplayProps) {
   const [toastTitle, setToastTitle] = useState('')
   const [toastDescription, setToastDescription] = useState('')
 
-  // Prepend the base URL from environment variables
   const fullUrl = `${process.env.NEXT_PUBLIC_BASE_URL}${url}`
 
   const copyToClipboard = async () => {
@@ -24,13 +23,11 @@ export default function FileUrlDisplay({ url }: FileUrlDisplayProps) {
       setCopying(true)
       await navigator.clipboard.writeText(fullUrl)
 
-      // Set toast message for success
       setToastTitle("URL copied")
       setToastDescription("The file URL has been copied to your clipboard.")
     } catch (err) {
       console.error('Failed to copy: ', err)
 
-      // Set toast message for error
       setToastTitle("Copy failed")
       setToastDescription("There was an error copying the URL. Please try again.")
     } finally {
@@ -45,7 +42,7 @@ export default function FileUrlDisplay({ url }: FileUrlDisplayProps) {
         <Input value={fullUrl} readOnly className="flex-grow" />
         <Button onClick={copyToClipboard} disabled={copying}>
           <Copy className="mr-2 h-4 w-4" />
-          {copying ? 'Copying...' : 'Copy'}
+          Copy
         </Button>
         <Button asChild>
           <a href={fullUrl} target="_blank" rel="noopener noreferrer">
@@ -55,7 +52,6 @@ export default function FileUrlDisplay({ url }: FileUrlDisplayProps) {
         </Button>
       </div>
 
-      {/* Toast Notification */}
       {showToast && (
         <Toast onOpenChange={setShowToast}>
           <ToastTitle>{toastTitle}</ToastTitle>
