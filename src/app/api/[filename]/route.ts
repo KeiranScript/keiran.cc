@@ -1,17 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createReadStream } from 'fs'
 import { stat } from 'fs/promises'
 import path from 'path'
 
 export async function GET(
-  request: NextRequest,
   { params }: { params: { filename: string } }
 ) {
   const filename = params.filename
   const filePath = path.join(process.cwd(), 'public', 'uploads', filename)
 
   console.log('File uploaded:', filePath)
-  console.log(request)
 
   try {
     await stat(filePath)
