@@ -5,15 +5,24 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useSearchParams } from 'next/navigation'
 
 export default function Bio() {
   const [mounted, setMounted] = useState(false)
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   if (!mounted) return null
+
+  const isGuraProfilePic = searchParams.get('linqfy-stop-asking-for-the-gura-pfp') !== null;
+  const profilePic = isGuraProfilePic ? '/gura.gif' : '/profile.gif';
+  const baseTechs = ["Python", "React", "Next.js", "Tailwind CSS", "Docker", "Git"];
+  const techs = searchParams.get('linqfy-stop-asking-for-the-gura-pfp') !== null
+    ? [...baseTechs, "Linqfy's mom"]
+    : baseTechs;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -35,7 +44,7 @@ export default function Bio() {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <Image
-                src="/profile.gif"
+                src={profilePic}
                 alt="Profile GIF"
                 width={192}
                 height={192}
@@ -48,7 +57,7 @@ export default function Bio() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                whileHover={{ scale: 1.05, rotate: -2 }} // Add hover effect
+                whileHover={{ scale: 1.05, rotate: -2 }}
               >
                 <span className="glow">Keiran</span>
               </motion.h2>
@@ -66,12 +75,12 @@ export default function Bio() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
-                {["Python", "React", "Next.js", "Tailwind CSS", "Docker", "Git"].map((tech, index) => (
+                {techs.map((tech, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }} // Stagger the badges
+                    transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }}
                   >
                     <Badge className="bg-primary text-primary-foreground">{tech}</Badge>
                   </motion.div>
@@ -124,7 +133,6 @@ export default function Bio() {
             0 0 25px rgba(255, 255, 255, 0.8), 
             0 0 35px rgba(255, 255, 255, 0.6);
         }
-
       `}</style>
     </div>
   )
