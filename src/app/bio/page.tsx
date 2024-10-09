@@ -1,26 +1,18 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { useSearchParams } from 'next/navigation'
+import { useState, useEffect, Suspense } from 'react';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useSearchParams } from 'next/navigation';
 
-export default function Bio() {
-  const [mounted, setMounted] = useState(false)
-  const searchParams = useSearchParams()
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) return null
-
+const BioContent = () => {
+  const searchParams = useSearchParams();
   const isGuraProfilePic = searchParams.get('linqfy-stop-asking-for-the-gura-pfp') !== null;
   const profilePic = isGuraProfilePic ? '/gura.gif' : '/profile.gif';
   const baseTechs = ["Python", "React", "Next.js", "Tailwind CSS", "Docker", "Git"];
-  const techs = searchParams.get('linqfy-stop-asking-for-the-gura-pfp') !== null
+  const techs = isGuraProfilePic
     ? [...baseTechs, "Linqfy's mom"]
     : baseTechs;
 
@@ -135,5 +127,15 @@ export default function Bio() {
         }
       `}</style>
     </div>
-  )
-}
+  );
+};
+
+const Bio = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BioContent />
+    </Suspense>
+  );
+};
+
+export default Bio;
