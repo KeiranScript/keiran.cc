@@ -37,9 +37,6 @@ function getContentType(ext: string): string {
     '.jpeg': 'image/jpeg',
     '.png': 'image/png',
     '.gif': 'image/gif',
-    '.pdf': 'application/pdf',
-    '.doc': 'application/msword',
-    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   }
 
   return contentTypes[ext] || 'application/octet-stream'

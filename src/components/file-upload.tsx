@@ -7,7 +7,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Upload, Loader2, File, CheckCircle } from 'lucide-react'
 import { ToastProvider, Toast, ToastTitle, ToastDescription, ToastViewport } from '@/components/ui/toast'
+import { Progress } from '@/components/ui/progress'
 import FileUrlDisplay from '@/components/file-url-display'
+
+const MAX_FILE_SIZE = 1024 * 1024 * 1024 // 1GB in bytes
 
 export default function FileUpload() {
   const [file, setFile] = useState<File | null>(null)
@@ -18,33 +21,37 @@ export default function FileUpload() {
   const [toastDescription, setToastDescription] = useState('')
   const [uploadSuccess, setUploadSuccess] = useState(false)
   const [buttonLabel, setButtonLabel] = useState('Upload')
+  const [uploadProgress, setUploadProgress] = useState(0)
   const router = useRouter()
 
-  const [animateClass, setAnimateClass] = useState('opacity-0 translate-y-10'); // Initial class for animation
+  const [animateClass, setAnimateClass] = useState('opacity-0 translate-y-10')
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFile(acceptedFiles[0])
+    const selectedFile = acceptedFiles[0]
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      setToastMessage('File too large')
+      setToastDescription('Maximum file size is 1GB.')
+      setShowToast(true)
+    } else {
+      setFile(selectedFile)
+    }
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
-    accept: {
-      'image/*': [],
-      'application/pdf': [],
-      'application/msword': [],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
-    },
   })
 
   const handleUpload = async () => {
     if (!file) return
 
     setUploading(true)
-    const formData = new FormData()
-    formData.append('file', file)
+    setUploadProgress(0)
 
     try {
+      const formData = new FormData()
+      formData.append('file', file)
+
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
@@ -56,9 +63,9 @@ export default function FileUpload() {
 
       const data = await response.json()
       setUploadedFileUrl(data.url)
+
       setUploadSuccess(true)
       setButtonLabel('Uploaded')
-
       setToastMessage('File uploaded successfully')
       setToastDescription('Visit the link to access your file!')
 
@@ -68,7 +75,6 @@ export default function FileUpload() {
       }, 1000)
     } catch (error) {
       console.error('Upload error:', error)
-
       setToastMessage('Upload failed')
       setToastDescription('There was an error uploading your file. Please try again.')
     } finally {
@@ -86,14 +92,13 @@ export default function FileUpload() {
     }
   }, [showToast])
 
-  // Animate elements on load
   useEffect(() => {
     const timer = setTimeout(() => {
-      setAnimateClass('opacity-100 translate-y-0 transition-transform duration-500');
-    }, 100); // Delay before animation starts
+      setAnimateClass('opacity-100 translate-y-0 transition-transform duration-500')
+    }, 100)
 
-    return () => clearTimeout(timer);
-  }, []);
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <ToastProvider>
@@ -114,7 +119,7 @@ export default function FileUpload() {
                 <Upload className="h-12 w-12 text-primary mx-auto mb-4" />
                 <p className="text-lg mb-2 font-semibold text-foreground">Drag & drop a file here, or click to select a file</p>
                 <p className="text-sm text-muted-foreground">
-                  Max 100mb per file
+                  Max file size: 1GB
                 </p>
               </div>
             )}
@@ -143,6 +148,12 @@ export default function FileUpload() {
               )}
             </Button>
           </div>
+          {uploading && (
+            <div className="mt-4">
+              <Progress value={uploadProgress} className="w-full" />
+              <p className="text-sm text-center mt-2 text-muted-foreground">{Math.round(uploadProgress)}% uploaded</p>
+            </div>
+          )}
           {uploadedFileUrl && (
             <div className="mt-6 transition-all duration-300 ease-in-out">
               <FileUrlDisplay url={uploadedFileUrl} />
