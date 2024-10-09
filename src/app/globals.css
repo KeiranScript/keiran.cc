@@ -89,3 +89,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.opacity-100 {
+  opacity: 1;
+}
+
+.translate-y-10 {
+  transform: translateY(2.5rem); /* Adjust the distance for the effect */
+}
+
+.translate-y-0 {
+  transform: translateY(0);
+}
+
+.transition-transform {
+  transition: transform 0.5s ease;
+}
+
+.transition-opacity {
+  transition: opacity 0.5s ease;
+}
+

@@ -1,35 +1,41 @@
-import FileUpload from '@/components/file-upload'
+"use client"; // Add this line
+
+import { useEffect, useState } from 'react';
+import FileUpload from '@/components/file-upload';
 
 export default function Home() {
+  const [animateClass, setAnimateClass] = useState('opacity-0 translate-y-10'); // Initial class for animation
+  const [paragraphClass, setParagraphClass] = useState('opacity-0 translate-y-10'); // Initial class for paragraph animation
+
+  // Animate elements on load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimateClass('opacity-100 translate-y-0 transition-transform duration-500');
+    }, 100); // Delay before main animation starts
+
+    const paragraphTimer = setTimeout(() => {
+      setParagraphClass('opacity-100 translate-y-0 transition-transform duration-500');
+    }, 600); // Delay for paragraph to appear after main content
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(paragraphTimer);
+    };
+  }, []);
+
   return (
-    <div className="bg-background flex flex-col items-center justify-center px-4 py-12">
-      <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center text-foreground transition-transform duration-300 transform hover:scale-105">
-        Upload Your Files
-      </h1>
-      <p className="text-lg md:text-xl text-center text-muted-foreground mb-8 max-w-2xl transition-opacity duration-300">
-        Unlimited uploads for free, forever.
-      </p>
-      <div className="flex items-center justify-center w-full max-w-3xl py-8">
-        <FileUpload />
+    <>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className={`text-4xl md:text-5xl font-extrabold mb-8 text-center text-foreground transition-all duration-300 ease-in-out transform hover:scale-105 ${animateClass}`}>
+          Upload Your Files
+        </h1>
+        <p className={`text-lg md:text-xl text-center text-muted-foreground mb-8 max-w-2xl mx-auto transition-opacity duration-300 hover:opacity-80 ${paragraphClass}`}>
+          Unlimited uploads for free, forever.
+        </p>
+        <div className={`flex items-center justify-center w-full max-w-3xl mx-auto transition-transform duration-300 ease-in-out transform hover:scale-102 ${animateClass}`}>
+          <FileUpload />
+        </div>
       </div>
-    </div>
-  )
+    </>
+  );
 }
-
-export const metadata = {
-  title: 'AnonHost',
-  description: 'Upload your files anonymously. Free, forever.',
-  openGraph: {
-    type: 'website',
-    url: 'https://keiran.cc',
-    title: 'AnonHost',
-    description: 'Upload your files anonymously. Free, forever.',
-    images: [
-      {
-        url: 'https://keiran.cc/profile.gif', // Replace with your image URL
-        alt: 'Gif',
-      },
-    ],
-  },
-};
-
