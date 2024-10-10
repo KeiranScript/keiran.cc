@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { promises as fs } from 'fs'
 import path from 'path'
-
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
@@ -38,3 +37,4 @@ export async function POST(request: NextRequest) {
     return new NextResponse('Chunk upload failed', { status: 500 })
   }
 }
+

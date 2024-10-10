@@ -11,7 +11,7 @@ const BioContent = () => {
   const searchParams = useSearchParams();
   const isGuraProfilePic = searchParams.get('linqfy-stop-asking-for-the-gura-pfp') !== null;
   const profilePic = isGuraProfilePic ? '/gura.gif' : '/profile.gif';
-  const baseTechs = ["Python", "React", "Next.js", "Tailwind CSS", "Docker", "Git"];
+  const baseTechs = ["TypeScript", "React", "Next.js", "Tailwind CSS", "Docker", "Git", "PostgreSQL", "Prisma"];
   const techs = isGuraProfilePic
     ? [...baseTechs, "Linqfy's mom"]
     : baseTechs;
@@ -40,7 +40,7 @@ const BioContent = () => {
                 alt="Profile GIF"
                 width={192}
                 height={192}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-full shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-110"
               />
             </motion.div>
             <div className="flex-1">
@@ -84,7 +84,7 @@ const BioContent = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
-                There would be a bio here but I am far too lazy to write it right now.
+                <span className="text-sm font-light leading-relaxed tracking-wide">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Architecto, ullam! Repellat harum aspernatur, illum impedit iusto voluptate, dolor eaque obcaecati omnis, corporis ex deserunt. Explicabo vero pariatur culpa labore alias.</span>
               </motion.p>
             </div>
           </div>
@@ -101,7 +101,21 @@ const BioContent = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.8 }}
               >
-                AnonHost - A secure and anonymous file hosting platform (you are on it right now!)
+                <a href="/" rel="noopener noreferrer">AnonHost</a> - Anonymous, unlimited file sharing. Proudly coded in neovim.
+              </motion.li>
+              <motion.li
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.0 }}
+              >
+                Some other project I'm yet to make
+              </motion.li>
+              <motion.li
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.2 }}
+              >
+                Some other project I'm yet to make
               </motion.li>
             </ul>
           </motion.div>
