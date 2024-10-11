@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useSearchParams } from 'next/navigation';
+import { LastFmNowPlaying } from '@/components/lastfm';
 
 const BioContent = () => {
   const searchParams = useSearchParams();
@@ -103,22 +104,16 @@ const BioContent = () => {
               >
                 <a href="/" rel="noopener noreferrer">AnonHost</a> - Anonymous, unlimited file sharing. Proudly coded in neovim.
               </motion.li>
-              <motion.li
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 1.0 }}
-              >
-                Some other project I'm yet to make
-              </motion.li>
-              <motion.li
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 1.2 }}
-              >
-                Some other project I'm yet to make
-              </motion.li>
             </ul>
           </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1.4 }}
+          >
+          </motion.div>
+          <LastFmNowPlaying />
         </CardContent>
       </Card>
 
