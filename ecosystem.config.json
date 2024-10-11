@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "keiran.cc",
+      "script": "pnpm",
+      "args": "start",
+      "cwd": "/home/keiran/keiran.cc/",
+      "watch": true,
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

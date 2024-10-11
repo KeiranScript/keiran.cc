@@ -9,8 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.667.0",
-    "@aws-sdk/node-http-handler": "^3.374.0",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
@@ -24,6 +22,7 @@
     "lucide-react": "^0.447.0",
     "next": "14.2.15",
     "next-themes": "^0.3.0",
+    "pm2": "^5.4.2",
     "punycode": "^2.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

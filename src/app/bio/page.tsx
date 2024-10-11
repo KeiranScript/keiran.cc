@@ -89,23 +89,23 @@ const BioContent = () => {
               </motion.p>
             </div>
           </div>
-          <motion.div
-            className="mt-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-          >
-            <h3 className="text-2xl font-semibold mb-4 text-primary">Recent Projects</h3>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <motion.li
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-              >
-                <a href="/" rel="noopener noreferrer">AnonHost</a> - Anonymous, unlimited file sharing. Proudly coded in neovim.
-              </motion.li>
-            </ul>
-          </motion.div>
+          {/* <motion.div */}
+          {/*   className="mt-8" */}
+          {/*   initial={{ opacity: 0, y: 20 }} */}
+          {/*   animate={{ opacity: 1, y: 0 }} */}
+          {/*   transition={{ duration: 0.5, delay: 0.7 }} */}
+          {/* > */}
+          {/*   <h3 className="text-2xl font-semibold mb-4 text-primary">Recent Projects</h3> */}
+          {/*   <ul className="list-disc list-inside space-y-2 text-muted-foreground"> */}
+          {/*     <motion.li */}
+          {/*       initial={{ opacity: 0, scale: 0.5 }} */}
+          {/*       animate={{ opacity: 1, scale: 1 }} */}
+          {/*       transition={{ duration: 0.5, delay: 0.8 }} */}
+          {/*     > */}
+          {/*       <a href="/" rel="noopener noreferrer">AnonHost</a> - Anonymous, unlimited file sharing. Proudly coded in neovim. */}
+          {/*     </motion.li> */}
+          {/*   </ul> */}
+          {/* </motion.div> */}
           
           <motion.div
             initial={{ opacity: 0, y: 20 }}
