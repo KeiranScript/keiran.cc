@@ -7,8 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Music, Clock, BarChart2 } from 'lucide-react'
 import Image from 'next/image'
 
-const API_KEY = 'b9ccee3a3549710f372e1b23357612cd'
-const USERNAME = 'Kuuichi2'
+const API_KEY = process.env.NEXT_PUBLIC_LASTFM_API_KEY || ''
+const USERNAME = process.env.NEXT_PUBLIC_LASTFM_USERNAME || ''
 
 interface TrackInfo {
   name: string

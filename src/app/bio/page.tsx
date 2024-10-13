@@ -12,10 +12,20 @@ const BioContent = () => {
   const searchParams = useSearchParams();
   const isGuraProfilePic = searchParams.get('linqfy-stop-asking-for-the-gura-pfp') !== null;
   const profilePic = isGuraProfilePic ? '/gura.gif' : '/profile.gif';
-  const baseTechs = ["TypeScript", "React", "Next.js", "Tailwind CSS", "Docker", "Git", "PostgreSQL", "Prisma"];
+
+  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "keiran.cc";
+  const bioName = process.env.NEXT_PUBLIC_BIO_NAME || "Skid";
+  const bioTechsDesc = process.env.NEXT_PUBLIC_BIO_TECHS_DESCRIPTION || "Some technologies I use to skid";
+  const bioTechs = process.env.NEXT_PUBLIC_BIO_TECHS
+    ? process.env.NEXT_PUBLIC_BIO_TECHS.split(',')
+    : ["Skidding"];
+  const bioDescription = process.env.NEXT_PUBLIC_BIO_DESCRIPTION || "Default bio description.";
+
   const techs = isGuraProfilePic
-    ? [...baseTechs, "Linqfy's mom"]
-    : baseTechs;
+    ? [...bioTechs, "Linqfy's mom"]
+    : bioTechs;
+
+  const hasLastFmCredentials = process.env.NEXT_PUBLIC_LASTFM_API_KEY && process.env.NEXT_PUBLIC_LASTFM_USERNAME;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -25,7 +35,7 @@ const BioContent = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        About Me
+        About {brandName}
       </motion.h1>
       <Card className="max-w-4xl mx-auto overflow-hidden shadow-lg">
         <CardContent className="p-6">
@@ -52,7 +62,7 @@ const BioContent = () => {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 whileHover={{ scale: 1.05, rotate: -2 }}
               >
-                <span className="glow">Keiran</span>
+                <span className="glow">{bioName}</span>
               </motion.h2>
               <motion.p
                 className="text-lg text-muted-foreground mb-4"
@@ -60,7 +70,7 @@ const BioContent = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                Some technologies I have experience in using:
+                {bioTechsDesc}
               </motion.p>
               <motion.div
                 className="flex flex-wrap gap-2 mb-4"
@@ -85,35 +95,11 @@ const BioContent = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
-                <span className="text-sm font-light leading-relaxed tracking-wide">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Architecto, ullam! Repellat harum aspernatur, illum impedit iusto voluptate, dolor eaque obcaecati omnis, corporis ex deserunt. Explicabo vero pariatur culpa labore alias.</span>
+                <span className="text-sm font-light leading-relaxed tracking-wide">{bioDescription}</span>
               </motion.p>
             </div>
           </div>
-          {/* <motion.div */}
-          {/*   className="mt-8" */}
-          {/*   initial={{ opacity: 0, y: 20 }} */}
-          {/*   animate={{ opacity: 1, y: 0 }} */}
-          {/*   transition={{ duration: 0.5, delay: 0.7 }} */}
-          {/* > */}
-          {/*   <h3 className="text-2xl font-semibold mb-4 text-primary">Recent Projects</h3> */}
-          {/*   <ul className="list-disc list-inside space-y-2 text-muted-foreground"> */}
-          {/*     <motion.li */}
-          {/*       initial={{ opacity: 0, scale: 0.5 }} */}
-          {/*       animate={{ opacity: 1, scale: 1 }} */}
-          {/*       transition={{ duration: 0.5, delay: 0.8 }} */}
-          {/*     > */}
-          {/*       <a href="/" rel="noopener noreferrer">AnonHost</a> - Anonymous, unlimited file sharing. Proudly coded in neovim. */}
-          {/*     </motion.li> */}
-          {/*   </ul> */}
-          {/* </motion.div> */}
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1.4 }}
-          >
-          </motion.div>
-          <LastFmNowPlaying />
+          {hasLastFmCredentials && <LastFmNowPlaying />}
         </CardContent>
       </Card>
 

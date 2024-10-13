@@ -11,6 +11,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
+const branding = process.env.NEXT_PUBLIC_BRANDING || 'keiran.cc'
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -31,7 +33,7 @@ export default function Navbar() {
   return (
     <nav className="border-b">
       <div className="container flex h-16 items-center justify-between px-4">
-        <Link href="/" className="font-bold text-2xl">AnonHost</Link>
+        <Link href="/" className="font-bold text-2xl">{branding}</Link>
         <div className="hidden md:flex items-center space-x-4">
           <NavItems />
           <ThemeSwitcher />
