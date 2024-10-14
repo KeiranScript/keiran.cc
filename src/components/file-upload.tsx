@@ -8,7 +8,7 @@ import { Upload, Loader2, File, CheckCircle } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import FileUrlDisplay from '@/components/file-url-display'
 
-const MAX_FILE_SIZE = 1024 * 1024 * 100 // 100MB in bytes
+const MAX_FILE_SIZE = 1024 * 1024 * 1024 // 1GB in bytes
 const CHUNK_SIZE = 1024 * 1024 * 10 // 10MB in bytes
 
 export default function FileUpload({ setToast }: { setToast: (message: string, description: string) => void }) {
@@ -22,7 +22,7 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0]
     if (selectedFile.size > MAX_FILE_SIZE) {
-      setToast('File too large', 'Maximum file size is 100MB.')
+      setToast('File too large', 'Maximum file size is 1GB.')
     } else {
       setFile(selectedFile)
     }
@@ -80,7 +80,6 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
       setButtonLabel('Uploaded')
       setToast('File uploaded successfully', 'Visit the link to access your file!')
   
-      // Change the button back to 'Upload' after 1 second
       setTimeout(() => {
         setButtonLabel('Upload')
         setUploadSuccess(false)
@@ -111,7 +110,7 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
             <div>
               <Upload className="h-12 w-12 text-primary mx-auto mb-4" />
               <p className="text-lg mb-2 font-semibold text-foreground">Drag & drop a file here, or click to select a file</p>
-              <p className="text-sm text-muted-foreground">Max file size: 100MB</p>
+              <p className="text-sm text-muted-foreground">Max file size: 1GB</p>
             </div>
           )}
         </div>
