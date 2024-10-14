@@ -2,10 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import FileUpload from '@/components/file-upload';
+import Updates from '@/components/updates';
+import { Toaster } from '@/components/ui/toaster';
+import { toast } from '@/hooks/use-toast';
+import FileUrlDisplay from '@/components/file-url-display';
 
 export default function Home() {
   const [animateClass, setAnimateClass] = useState('opacity-0 translate-y-10');
   const [paragraphClass, setParagraphClass] = useState('opacity-0 translate-y-10');
+  const [updatesClass, setUpdatesClass] = useState('opacity-0 translate-y-10');
+  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
+
+  const setToast = (message: string, description: string) => {
+    toast({ title: message, description });
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -16,9 +26,14 @@ export default function Home() {
       setParagraphClass('opacity-100 translate-y-0 transition-transform duration-500');
     }, 600);
 
+    const updatesTimer = setTimeout(() => {
+      setUpdatesClass('opacity-100 translate-y-0 transition-transform duration-500');
+    }, 1100);
+
     return () => {
       clearTimeout(timer);
       clearTimeout(paragraphTimer);
+      clearTimeout(updatesTimer);
     };
   }, []);
 
@@ -32,9 +47,18 @@ export default function Home() {
           Unlimited uploads for free, forever.
         </p>
         <div className={`flex items-center justify-center w-full max-w-3xl mx-auto transition-transform duration-300 ease-in-out transform hover:scale-102 ${animateClass}`}>
-          <FileUpload />
+          <FileUpload setToast={setToast} />
+        </div>
+        {uploadedFileUrl && (
+          <div className="mt-6">
+            <FileUrlDisplay url={uploadedFileUrl} />
+          </div>
+        )}
+        <div className={`mt-12 transition-all duration-500 ease-in-out max-w-3xl mx-auto ${updatesClass}`}>
+          <Updates />
         </div>
       </div>
+      <Toaster />
     </>
   );
 }
