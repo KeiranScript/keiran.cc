@@ -13,13 +13,13 @@ const BioContent = () => {
   const isGuraProfilePic = searchParams.get('linqfy-stop-asking-for-the-gura-pfp') !== null;
   const profilePic = isGuraProfilePic ? '/gura.gif' : '/profile.gif';
 
-  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "keiran.cc";
+  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "skidderhost";
   const bioName = process.env.NEXT_PUBLIC_BIO_NAME || "Skid";
   const bioTechsDesc = process.env.NEXT_PUBLIC_BIO_TECHS_DESCRIPTION || "Some technologies I use to skid";
   const bioTechs = process.env.NEXT_PUBLIC_BIO_TECHS
     ? process.env.NEXT_PUBLIC_BIO_TECHS.split(',')
     : ["Skidding"];
-  const bioDescription = process.env.NEXT_PUBLIC_BIO_DESCRIPTION || "Default bio description.";
+  const bioDescription = process.env.NEXT_PUBLIC_BIO_DESCRIPTION || "brb skidding";
 
   const techs = isGuraProfilePic
     ? [...bioTechs, "Linqfy's mom"]

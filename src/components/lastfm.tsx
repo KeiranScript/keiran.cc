@@ -48,7 +48,7 @@ export function LastFmNowPlaying() {
           name: latestTrack.name,
           artist: latestTrack.artist['#text'],
           album: latestTrack.album['#text'],
-          image: latestTrack.image[2]['#text'] // Medium size image
+          image: latestTrack.image[2]['#text']
         })
 
         setUserInfo({
@@ -65,7 +65,7 @@ export function LastFmNowPlaying() {
     }
 
     fetchData()
-    const interval = setInterval(fetchData, 30000) // Refresh every 30 seconds
+    const interval = setInterval(fetchData, 30000)
 
     return () => clearInterval(interval)
   }, [])
