@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Upload, User, BarChart2, Menu, X } from 'lucide-react'
+import { Upload, User, BarChart2, Menu, Cat } from 'lucide-react'
 import { ThemeSwitcher } from '@/components/theme-switcher'
 import {
   Sheet,
@@ -26,6 +26,9 @@ export default function Navbar() {
       </Button>
       <Button variant="ghost" asChild onClick={() => setIsOpen(false)}>
         <Link href="/stats"><BarChart2 className="mr-2 h-4 w-4" /> Stats</Link>
+      </Button>
+      <Button variant="ghost" asChild onClick={() => setIsOpen(false)}>
+        <Link href="/gallery"><Cat className="mr-2 h-4 w-4" /> Zoe</Link>
       </Button>
     </>
   )
