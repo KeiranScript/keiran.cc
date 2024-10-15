@@ -5,7 +5,13 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from "@/components/ui/card";
 
-const getImages = async () => {
+interface ImageData {
+  id: number;
+  src: string;
+  alt: string;
+}
+
+const getImages = async (): Promise<ImageData[]> => {
   return [
     { id: 1, src: '/zoe/image1.png', alt: 'Zoe Image 1' },
     { id: 2, src: '/zoe/image2.png', alt: 'Zoe Image 2' },
@@ -22,7 +28,7 @@ const getImages = async () => {
 };
 
 const GalleryContent = () => {
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<ImageData[]>([]);
 
   useEffect(() => {
     const loadImages = async () => {
@@ -66,9 +72,6 @@ const GalleryContent = () => {
                     className="transition-transform duration-300 ease-in-out transform hover:scale-105"
                   />
                 </div>
-                {/* <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black to-transparent">
-                  <Badge className="bg-primary text-primary-foreground">{image.category}</Badge>
-                </div> */}
               </CardContent>
             </Card>
           </motion.div>
