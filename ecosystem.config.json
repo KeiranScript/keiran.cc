@@ -5,7 +5,8 @@
       "script": "pnpm",
       "args": "start",
       "cwd": "/home/keiran/keiran.cc/",
-      "watch": true,
+      "watch": false,
+      "ignore_watch": 'public/uploads/chunks',
       "env": {
         "NODE_ENV": "production"
       }
