@@ -30,9 +30,6 @@ export default function Navbar() {
       <Button variant="ghost" asChild onClick={() => setIsOpen(false)}>
         <Link href="/gallery"><Cat className="mr-2 h-4 w-4" /> Zoe</Link>
       </Button>
-      <Button variant="ghost" asChild onClick={() => setIsOpen(false)}>
-        <Link href="/arm"><BicepsFlexed className="mr-2 h-4 w-4" /> Arm</Link>
-      </Button>
     </>
   )
 

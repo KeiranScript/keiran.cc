@@ -8,8 +8,8 @@ import { Toaster } from '@/components/ui/toaster'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'AnonHost',
-  description: 'Upload your files, anonymously.',
+  title: 'keiran.cc',
+  description: 'ill write this later ig',
 }
 
 export default function RootLayout({
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(
-        "min-h-screen bg-background font-sans antialiased",
+        "min-h-screen bg-background font-sans text-slate-900 antialiased",
         inter.className
       )}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
