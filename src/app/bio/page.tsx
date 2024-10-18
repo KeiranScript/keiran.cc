@@ -80,6 +80,10 @@ function DiscordPresence({ userId }: { userId: string }) {
     return <p className="text-sm text-muted-foreground">Discord presence unavailable</p>;
   }
 
+  if (!presenceData || !presenceData.activities.some(activity => activity.type === 0)) {
+    return null;
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'online': return 'bg-green-500';
@@ -259,6 +263,13 @@ function BioContent() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <motion.h1
+        className="text-4xl md:text-5xl font-extrabold mb-8 text-center text-foreground"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        >
+      </motion.h1>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -321,7 +332,7 @@ function BioContent() {
                       transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
                     >
                       <Badge 
-                        className="bg-gradient-to-r from-pink-500 to-purple-500 text-primary-foreground transition-all duration-300 hover:shadow-lg hover:scale-105"
+                        className="bg-primary text-sm rounded-full px-2 py-1 transition-all duration-300 hover:shadow-lg hover:scale-105"
                         onClick={handleSparkle}
                       >
                         {tech}
