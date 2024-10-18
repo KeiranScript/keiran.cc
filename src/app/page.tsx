@@ -5,6 +5,7 @@ import { motion, useAnimation, useDragControls } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRight, Upload, Shield, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 
 export default function LandingPage() {
   const controls = useAnimation()
@@ -87,76 +88,80 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden relative">
-      <motion.div
-        className="container mx-auto px-4 py-16 md:py-24 relative z-10"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.h1
-          className="text-4xl md:text-6xl font-extrabold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary"
-          variants={itemVariants}
-          animate="animate"
-        >
-          <motion.span variants={titleVariants}>Welcome to </motion.span>
-          <motion.span variants={titleVariants} className="text-primary">AnonHost</motion.span>
-        </motion.h1>
-        <motion.p
-          className="text-xl md:text-2xl text-center text-muted-foreground mb-12"
-          variants={itemVariants}
-        >
-          Upload and share files anonymously, up to 1GB per file.
-        </motion.p>
-        <motion.div className="flex justify-center mb-16" variants={itemVariants}>
-          <Link href="/upload">
-            <motion.div
-              variants={buttonVariants}
-              whileHover="hover"
-              whileTap="tap"
-              className="relative"
-            >
-              <Button size="lg" className="text-lg bg-primary hover:bg-primary/90 text-primary-foreground">
-                Start Uploading <ArrowRight className="ml-2" />
-              </Button>
-            </motion.div>
-          </Link>
-        </motion.div>
+      <div className="min-h-screen overflow-hidden relative">
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          className="container mx-auto px-4 py-16 md:py-24 relative z-10"
           variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
-          {[
-            { icon: Upload, title: "Easy Uploads", description: "Drag and drop or click to upload files up to 1GB." },
-            { icon: Shield, title: "Anonymous Sharing", description: "No account required. Your privacy is our priority." },
-            { icon: Zap, title: "Lightning Fast", description: "Optimized for speed, your files are ready in seconds." },
-          ].map((feature, index) => {
-
-            return (
+          <motion.h1
+            className="text-4xl md:text-6xl font-extrabold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary"
+            variants={itemVariants}
+            animate="animate"
+          >
+            <motion.span variants={titleVariants}>Welcome to </motion.span>
+              <motion.span variants={titleVariants} className="text-primary">AnonHost</motion.span>
+          </motion.h1>
+          <motion.div
+            className="text-xl md:text-2xl text-center text-muted-foreground mb-12"
+            variants={itemVariants}
+          >
+            <TextGenerateEffect
+              className="text-xl md:text-2xl text-center text-muted-foreground mb-12"
+              words="Upload and share files anonymously. For free, forever."
+              duration={1.5}
+            />
+          </motion.div>
+          <motion.div className="flex justify-center mb-16" variants={itemVariants}>
+            <Link href="/upload">
               <motion.div
-                key={index}
-                className="rounded-lg p-6 shadow-lg border border-primary/10 backdrop-blur-sm hover:shadow-xl"
-                variants={itemVariants}
-                whileHover={cardVariants.hover}
-                dragControls={dragControls}
-                dragMomentum={true}
-                dragElastic={1}
-                dragTransition={{ bounceStiffness: 100, bounceDamping: 0 }}
-                onDragStart={() => controls.start({ scale: 1.05 })}
-                onDragEnd={() => controls.start({ scale: 1 })}
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
+                className="relative"
               >
-                <motion.div
-                  variants={iconVariants}
-                >
-                  <feature.icon className="w-12 h-12 text-primary mb-4" />
-                </motion.div>
-                <h2 className="text-2xl font-bold mb-2">{feature.title}</h2>
-                <p className="text-muted-foreground">{feature.description}</p>
+                <Button size="lg" className="text-lg bg-primary hover:bg-primary/90 text-primary-foreground">
+                  Start Uploading <ArrowRight className="ml-2" />
+                </Button>
               </motion.div>
-            )
-          })}
+            </Link>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            variants={containerVariants}
+          >
+            {[
+              { icon: Upload, title: "Easy Uploads", description: "Drag and drop or click to upload files up to 1GB." },
+              { icon: Shield, title: "Anonymous Sharing", description: "No account required. Your privacy is our priority." },
+              { icon: Zap, title: "Lightning Fast", description: "Optimized for speed, your files are ready in seconds." },
+            ].map((feature, index) => {
+
+              return (
+                <motion.div
+                  key={index}
+                  className="rounded-lg p-6 shadow-lg border border-primary/10 backdrop-blur-sm hover:shadow-xl"
+                  variants={itemVariants}
+                  whileHover={cardVariants.hover}
+                  dragControls={dragControls}
+                  dragMomentum={true}
+                  dragElastic={1}
+                  dragTransition={{ bounceStiffness: 100, bounceDamping: 0 }}
+                  onDragStart={() => controls.start({ scale: 1.05 })}
+                  onDragEnd={() => controls.start({ scale: 1 })}
+                >
+                  <motion.div
+                    variants={iconVariants}
+                  >
+                    <feature.icon className="w-12 h-12 text-primary mb-4" />
+                  </motion.div>
+                  <h2 className="text-2xl font-bold mb-2">{feature.title}</h2>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </motion.div>
+              )
+            })}
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </div>
+      </div>
   )
 }

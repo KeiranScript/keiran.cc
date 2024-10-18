@@ -22,6 +22,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.4",
     "lucide-react": "^0.447.0",
+    "mini-svg-data-uri": "^1.4.4",
     "next": "14.2.15",
     "next-themes": "^0.3.0",
     "pm2": "^5.4.2",

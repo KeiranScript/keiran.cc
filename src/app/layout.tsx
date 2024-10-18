@@ -18,15 +18,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className='dark'>
       <body className={cn(
-        "min-h-screen bg-gradient-to-br from-background via-secondary to-background bg-grid-pattern font-sans antialiased",
+        "w-full dark:bg-black bg-white  dark:bg-grid-white/[0.2] bg-grid-black/[0.2]",
         inter.className
       )}>
+        <div className='absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]'></div>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <div className="relative flex min-h-screen flex-col">
             <Navbar />
-            <main className="flex-1 container mx-auto px-4 py-8">
+            <main className="container mx-auto px-4 py-8 flex-1">
               {children}
             </main>
           </div>

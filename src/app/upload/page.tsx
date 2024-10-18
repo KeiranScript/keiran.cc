@@ -6,6 +6,7 @@ import Updates from '@/components/updates';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from '@/hooks/use-toast';
 import FileUrlDisplay from '@/components/file-url-display';
+import { motion } from 'framer-motion';
 
 export default function UploadPage() {
   const [animateClass, setAnimateClass] = useState('opacity-0 translate-y-10');
@@ -38,15 +39,19 @@ export default function UploadPage() {
   }, []);
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.7, ease: 'easeInOut' }}
+    >
       <div className="container mx-auto px-4 py-8">
-        <h1 className={`text-4xl md:text-5xl font-extrabold mb-8 text-center text-foreground transition-all duration-150 ease-in-out ${animateClass}`}>
+        <h1 className={`text-4xl md:text-5xl font-extrabold mb-8 text-center text-foreground`}>
           Upload Your Files
         </h1>
-        <p className={`text-lg md:text-xl text-center text-muted-foreground mb-8 max-w-2xl mx-auto transition-all duration-150 ease-in-out ${animateClass}`}>
+        <p className={`text-lg md:text-xl text-center text-muted-foreground mb-8 max-w-2xl mx-auto`}>
           Unlimited uploads for free, forever.
         </p>
-        <div className={`flex items-center justify-center w-full max-w-3xl mx-auto transition-transform duration-150 ease-in-out transform hover:scale-102 ${paragraphClass}`}>
+        <div className={`flex items-center justify-center w-full max-w-3xl mx-auto`}>
           <FileUpload setToast={setToast} />
         </div>
         {uploadedFileUrl && (
@@ -54,11 +59,11 @@ export default function UploadPage() {
             <FileUrlDisplay url={uploadedFileUrl} />
           </div>
         )}
-        <div className={`mt-12 transition-all duration-500 ease-in-out max-w-3xl mx-auto ${updatesClass}`}>
+        <div className={`mt-12 max-w-3xl mx-auto`}>
           <Updates />
         </div>
       </div>
       <Toaster />
-    </>
+    </motion.div>
   );
 }
