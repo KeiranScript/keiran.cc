@@ -1,64 +1,162 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from 'react';
-import FileUpload from '@/components/file-upload';
-import Updates from '@/components/updates';
-import { Toaster } from '@/components/ui/toaster';
-import { toast } from '@/hooks/use-toast';
-import FileUrlDisplay from '@/components/file-url-display';
+import { useEffect, useState } from 'react'
+import { motion, useAnimation, useDragControls } from 'framer-motion'
+import Link from 'next/link'
+import { ArrowRight, Upload, Shield, Zap } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
-export default function Home() {
-  const [animateClass, setAnimateClass] = useState('opacity-0 translate-y-10');
-  const [paragraphClass, setParagraphClass] = useState('opacity-0 translate-y-10');
-  const [updatesClass, setUpdatesClass] = useState('opacity-0 translate-y-10');
-  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
-
-  const setToast = (message: string, description: string) => {
-    toast({ title: message, description });
-  };
+export default function LandingPage() {
+  const controls = useAnimation()
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setAnimateClass('opacity-100 translate-y-0 transition-transform duration-500');
-    }, 100);
+    controls.start("visible")
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      setCursorPosition({ x: e.clientX, y: e.clientY })
+    }
+    
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [controls])
 
-    const paragraphTimer = setTimeout(() => {
-      setParagraphClass('opacity-100 translate-y-0 transition-transform duration-500');
-    }, 600);
+  const dragControls = useDragControls()
 
-    const updatesTimer = setTimeout(() => {
-      setUpdatesClass('opacity-100 translate-y-0 transition-transform duration-500');
-    }, 1100);
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  }
 
-    return () => {
-      clearTimeout(timer);
-      clearTimeout(paragraphTimer);
-      clearTimeout(updatesTimer);
-    };
-  }, []);
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+      },
+    },
+  }
+
+  const buttonVariants = {
+    hover: { scale: 1.05, transition: { duration: 0.2 } },
+    tap: { scale: 0.95, transition: { duration: 0.2 } },
+  }
+
+  const cardVariants = {
+    hover: { 
+      y: -5, 
+      boxShadow: "0 10px 20px rgba(0,0,0,0.2)", 
+      transition: { duration: 0.3 } 
+    },
+  }
+
+  const iconVariants = {
+    hidden: { scale: 0 },
+    visible: { 
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+      },
+    },
+    hover: { 
+      rotate: 360,
+      transition: { duration: 0.6 },
+    },
+  }
+
+  const titleVariants = {
+    animate: {
+      y: [0, -10, 0],
+      transition: {
+        duration: 5,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+  }
 
   return (
-    <>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className={`text-4xl md:text-5xl font-extrabold mb-8 text-center text-foreground transition-all duration-300 ease-in-out transform hover:scale-105 ${animateClass}`}>
-          Upload Your Files
-        </h1>
-        <p className={`text-lg md:text-xl text-center text-muted-foreground mb-8 max-w-2xl mx-auto transition-opacity duration-300 hover:opacity-80 ${paragraphClass}`}>
-          Unlimited uploads for free, forever.
-        </p>
-        <div className={`flex items-center justify-center w-full max-w-3xl mx-auto transition-transform duration-300 ease-in-out transform hover:scale-102 ${animateClass}`}>
-          <FileUpload setToast={setToast} />
-        </div>
-        {uploadedFileUrl && (
-          <div className="mt-6">
-            <FileUrlDisplay url={uploadedFileUrl} />
-          </div>
-        )}
-        <div className={`mt-12 transition-all duration-500 ease-in-out max-w-3xl mx-auto ${updatesClass}`}>
-          <Updates />
-        </div>
-      </div>
-      <Toaster />
-    </>
-  );
+    <div className="min-h-screen overflow-hidden relative">
+      <motion.div
+        className="container mx-auto px-4 py-16 md:py-24 relative z-10"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h1
+          className="text-4xl md:text-6xl font-extrabold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary"
+          variants={itemVariants}
+          animate="animate"
+        >
+          <motion.span variants={titleVariants}>Welcome to </motion.span>
+          <motion.span variants={titleVariants} className="text-primary">AnonHost</motion.span>
+        </motion.h1>
+        <motion.p
+          className="text-xl md:text-2xl text-center text-muted-foreground mb-12"
+          variants={itemVariants}
+        >
+          Upload and share files anonymously, up to 1GB per file.
+        </motion.p>
+        <motion.div className="flex justify-center mb-16" variants={itemVariants}>
+          <Link href="/upload">
+            <motion.div
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
+              className="relative"
+            >
+              <Button size="lg" className="text-lg bg-primary hover:bg-primary/90 text-primary-foreground">
+                Start Uploading <ArrowRight className="ml-2" />
+              </Button>
+            </motion.div>
+          </Link>
+        </motion.div>
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          variants={containerVariants}
+        >
+          {[
+            { icon: Upload, title: "Easy Uploads", description: "Drag and drop or click to upload files up to 1GB." },
+            { icon: Shield, title: "Anonymous Sharing", description: "No account required. Your privacy is our priority." },
+            { icon: Zap, title: "Lightning Fast", description: "Optimized for speed, your files are ready in seconds." },
+          ].map((feature, index) => {
+
+            return (
+              <motion.div
+                key={index}
+                className="rounded-lg p-6 shadow-lg border border-primary/10 backdrop-blur-sm hover:shadow-xl"
+                variants={itemVariants}
+                whileHover={cardVariants.hover}
+                dragControls={dragControls}
+                dragMomentum={true}
+                dragElastic={1}
+                dragTransition={{ bounceStiffness: 100, bounceDamping: 0 }}
+                onDragStart={() => controls.start({ scale: 1.05 })}
+                onDragEnd={() => controls.start({ scale: 1 })}
+              >
+                <motion.div
+                  variants={iconVariants}
+                >
+                  <feature.icon className="w-12 h-12 text-primary mb-4" />
+                </motion.div>
+                <h2 className="text-2xl font-bold mb-2">{feature.title}</h2>
+                <p className="text-muted-foreground">{feature.description}</p>
+              </motion.div>
+            )
+          })}
+        </motion.div>
+      </motion.div>
+    </div>
+  )
 }

@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(
-        "min-h-screen bg-background font-sans antialiased",
+        "min-h-screen bg-gradient-to-br from-background via-secondary to-background bg-grid-pattern font-sans antialiased",
         inter.className
       )}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
@@ -36,4 +36,3 @@ export default function RootLayout({
     </html>
   )
 }
-

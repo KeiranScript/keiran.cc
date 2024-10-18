@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -35,13 +35,9 @@
     --radius: 0.5rem;
  
     --chart-1: 12 76% 61%;
- 
     --chart-2: 173 58% 39%;
- 
     --chart-3: 197 37% 24%;
- 
     --chart-4: 43 74% 66%;
- 
     --chart-5: 27 87% 67%;
   }
  
@@ -80,13 +76,22 @@
     --chart-5: 340 75% 55%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 }
 
@@ -99,7 +104,7 @@
 }
 
 .translate-y-10 {
-  transform: translateY(2.5rem); /* Adjust the distance for the effect */
+  transform: translateY(2.5rem);
 }
 
 .translate-y-0 {
@@ -112,4 +117,57 @@
 
 .transition-opacity {
   transition: opacity 0.5s ease;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-rotate {
+  transition: transform 0.3s ease;
+}
+
+.hover-rotate:hover {
+  transform: rotate(5deg);
+}
+
+.click-shrink {
+  transition: transform 0.1s ease;
+}
+
+.click-shrink:active {
+  transform: scale(0.95);
 }

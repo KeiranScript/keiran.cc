@@ -35,35 +35,35 @@ export default function FileUrlDisplay({ url }: FileUrlDisplayProps) {
 
   return (
     <div className="mt-4 p-4 border rounded-lg">
-      <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
-        <Input 
-          value={fullUrl} 
-          readOnly 
-          className="flex-grow"
-          aria-label="File URL"
-        />
-        <div className="flex space-x-2">
-          <Button 
-            onClick={copyToClipboard} 
-            variant="ghost"
-            aria-label="Copy URL to clipboard"
-          >
-            <Copy className="mr-2 h-4 w-4" />
-            Copy
-          </Button>
-          <Button asChild variant="ghost">
-            <a 
-              href={fullUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              aria-label="Open file URL in new tab"
+        <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
+          <Input 
+            value={fullUrl} 
+            readOnly 
+            className="flex-grow"
+            aria-label="File URL"
+          />
+          <div className="flex space-x-2">
+            <Button 
+              onClick={copyToClipboard} 
+              variant="ghost"
+              aria-label="Copy URL to clipboard"
             >
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Visit
-            </a>
-          </Button>
+              <Copy className="mr-2 h-4 w-4" />
+              Copy
+            </Button>
+            <Button asChild variant="ghost">
+              <a 
+                href={fullUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Open file URL in new tab"
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Visit
+              </a>
+            </Button>
+          </div>
         </div>
-      </div>
     </div>
   )
 }

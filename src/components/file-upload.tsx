@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Upload, Loader2, File, CheckCircle } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
+import confetti from 'canvas-confetti'
+import { motion } from 'framer-motion'
 import FileUrlDisplay from '@/components/file-url-display'
 
 const MAX_FILE_SIZE = 1024 * 1024 * 1024 // 1GB in bytes
@@ -18,6 +20,14 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
   const [uploadSuccess, setUploadSuccess] = useState(false)
   const [buttonLabel, setButtonLabel] = useState('Upload')
   const [uploadProgress, setUploadProgress] = useState(0)
+
+  const handleSparkle = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.8 }
+    });
+  };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0]
@@ -130,6 +140,7 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
               <>
                 <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
                 {buttonLabel}
+                {handleSparkle()}
               </>
             ) : (
               <>

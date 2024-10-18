@@ -17,6 +17,7 @@
     "@radix-ui/react-scroll-area": "^1.2.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.2",
+    "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.4",
@@ -28,12 +29,14 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.9",
+    "react-responsive-carousel": "^3.2.23",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.6.4",
     "@types/node": "^20.16.11",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
@@ -41,6 +44,7 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.14",
     "postcss": "^8.4.47",
+    "react-tilt": "^1.0.2",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.6.3"
   },

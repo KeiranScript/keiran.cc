@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button'
-import { Upload, User, BarChart2, Menu, Cat, BicepsFlexed } from 'lucide-react'
-import { ThemeSwitcher } from '@/components/theme-switcher'
+import { Upload, User, BarChart2, Menu, Cat } from 'lucide-react'
+import ThemeSwitcher from '@/components/theme-switcher-button'
 import {
   Sheet,
   SheetContent,
@@ -15,11 +16,12 @@ const branding = process.env.NEXT_PUBLIC_BRANDING || 'keiran.cc'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const { theme, setTheme } = useTheme();
 
   const NavItems = () => (
     <>
       <Button variant="ghost" asChild onClick={() => setIsOpen(false)}>
-        <Link href="/"><Upload className="mr-2 h-4 w-4" /> Upload</Link>
+        <Link href="/upload"><Upload className="mr-2 h-4 w-4" /> Upload</Link>
       </Button>
       <Button variant="ghost" asChild onClick={() => setIsOpen(false)}>
         <Link href="/bio"><User className="mr-2 h-4 w-4" /> Bio</Link>
@@ -34,7 +36,7 @@ export default function Navbar() {
   )
 
   return (
-    <nav className="border-b">
+    <nav className="border-b bg-background">
       <div className="container flex h-16 items-center justify-between px-4">
         <Link href="/" className="font-bold text-2xl">{branding}</Link>
         <div className="hidden md:flex items-center space-x-4">
@@ -52,7 +54,6 @@ export default function Navbar() {
             <SheetContent side="right" className="w-[240px] sm:w-[300px]">
               <div className="flex flex-col space-y-4 mt-4">
                 <NavItems />
-                <ThemeSwitcher />
               </div>
             </SheetContent>
           </Sheet>
