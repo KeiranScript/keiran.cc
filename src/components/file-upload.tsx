@@ -1,13 +1,12 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Upload, Loader2, File, CheckCircle } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import confetti from 'canvas-confetti'
-import { motion } from 'framer-motion'
 import FileUrlDisplay from '@/components/file-url-display'
 
 const MAX_FILE_SIZE = 1024 * 1024 * 1024 // 1GB in bytes
@@ -28,6 +27,12 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
       origin: { y: 0.8 }
     });
   };
+
+  useEffect(() => {
+    if (uploadSuccess) {
+      handleSparkle()
+    }
+  }, [uploadSuccess])
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0]
@@ -139,10 +144,7 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
               <div className=''>
                 <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
                 {buttonLabel}
-                {handleSparkle()}
               </div>
-
-
             ) : (
               <>
                 <Upload className="mr-2 h-5 w-5" />
