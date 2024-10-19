@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: { params: { filename: string 
       type: 'website',
       siteName: 'AnonHost',
       title: `${filename} - AnonHost`,
-      description: description.replace(/\n/g, ' '),
+      description: description,
       images: [{
         url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
       }],
