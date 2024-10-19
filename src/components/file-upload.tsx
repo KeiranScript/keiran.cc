@@ -88,7 +88,6 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
       setUploadedFileUrl(data.url)
       setUploadSuccess(true)
       setButtonLabel('Uploaded')
-      setToast('File uploaded successfully', 'Visit the link to access your file!')
   
       setTimeout(() => {
         setButtonLabel('Upload')
@@ -137,11 +136,13 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
                 Uploading...
               </>
             ) : uploadSuccess ? (
-              <>
+              <div className=''>
                 <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
                 {buttonLabel}
                 {handleSparkle()}
-              </>
+              </div>
+
+
             ) : (
               <>
                 <Upload className="mr-2 h-5 w-5" />

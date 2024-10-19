@@ -15,22 +15,7 @@ export default function FileUrlDisplay({ url }: FileUrlDisplayProps) {
   const fullUrl = `${process.env.NEXT_PUBLIC_BASE_URL}${url}`
 
   const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(fullUrl)
-
-      toast({
-        title: "URL copied",
-        description: "The file URL has been copied to your clipboard.",
-      })
-    } catch (err) {
-      console.error('Failed to copy: ', err)
-
-      toast({
-        title: "Copy failed",
-        description: "There was an error copying the URL. Please try again.",
-        variant: "destructive",
-      })
-    }
+    await navigator.clipboard.writeText(fullUrl)
   }
 
   return (

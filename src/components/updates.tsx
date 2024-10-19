@@ -14,6 +14,13 @@ interface Update {
 const updates: Update[] = [
   {
     id: 1,
+    date: '2024-10-19',
+    title: 'Toasts temporarily disabled',
+    description: 'A bug in the toast component has resulted in the toasts needing to be temporarily disabled while I work on fixing them. No ETA as of the time of writing.',
+    type: 'maintenance'
+  },
+  {
+    id: 2,
     date: '2024-10-14',
     title: '🎉 Fixed the file chunking bug! 🎉',
     description: 'The issue with uploading files larger than 100MB has been fixed and the upload limit is back up!',
