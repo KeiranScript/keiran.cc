@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     await fs.rm(chunksDir, { recursive: true, force: true })
 
-    return NextResponse.json({ url: `/f/${finalFilename}` })
+    return NextResponse.json({ url: `/${finalFilename}` })
   } catch (error) {
     console.error('Finalization error:', error)
     return new NextResponse('File finalization failed', { status: 500 })

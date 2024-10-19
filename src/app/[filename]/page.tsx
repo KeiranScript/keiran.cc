@@ -36,9 +36,9 @@ export async function generateMetadata({ params }: { params: { filename: string 
   let description;
   if (fileType === 'code') {
     const language = getLanguageFromExtension(filename);
-    description = `📄 Language: ${language}\n📂 Lines: ${numberOfLines}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
+    description = `🌎 Language: ${language}\n✍️ Lines: ${numberOfLines}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
   } else {
-    description = `File Name: ${filename}\nFile Size: ${fileSize}\nTotal Uploads: ${stats.totalFiles}\nStorage: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
+    description = `📄 File Name: ${filename}\n📂 File Size: ${fileSize}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
   }
 
   return {
