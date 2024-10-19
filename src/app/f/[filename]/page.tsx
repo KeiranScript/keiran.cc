@@ -73,7 +73,7 @@ export default async function FilePage({ params }: { params: { filename: string 
   }
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="container">
       <Card className="p-6 rounded-lg shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">{filename}</CardTitle>
