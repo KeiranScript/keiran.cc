@@ -27,7 +27,7 @@ interface CustomOpenGraph extends Metadata {
   };
 }
 
-export async function generateMetadata({ params }: { params: { filename: string } }): Promise<CustomOpenGraph> {
+export async function generateMetadata({ params }: { params: { filename: string } }) {
   const { filename } = params;
   const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
 
@@ -40,7 +40,6 @@ export async function generateMetadata({ params }: { params: { filename: string 
   }
 
   const fileSize = formatBytes(fileStats.size);
-
   const response = await fetch(STATS_API_URL);
   const stats = await response.json();
 
@@ -56,28 +55,37 @@ export async function generateMetadata({ params }: { params: { filename: string 
     description = `📄 File Name: ${filename}\n📂 File Size: ${fileSize}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
   }
 
-  const openGraphData: CustomOpenGraph['openGraph'] = {
+  // Open Graph metadata
+  const openGraphData = {
     type: 'website',
     siteName: 'AnonHost',
     title: `${filename} - AnonHost`,
     description: description,
-    url: `${process.env.NEXT_PUBLIC_API_URL}`,
+    url: `${process.env.NEXT_PUBLIC_API_URL}/uploads/${filename}`,
     images: [{
       url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
     }],
   };
 
+  // Twitter Player metadata for video
+  const twitterPlayerData: Record<string, string> = {
+    'twitter:card': 'player',
+    'twitter:title': `${filename} - AnonHost`,
+    'twitter:description': description,
+    'twitter:player': `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
+    'twitter:player:width': '1280',
+    'twitter:player:height': '720',
+    'twitter:player:stream': `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
+    'twitter:image': `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
+  };
+
   if (fileType === 'video') {
     openGraphData.type = 'video.other';
-    openGraphData.video = {
-      url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
-      width: 1280,
-      height: 720,
-    };
   }
 
   return {
     openGraph: openGraphData,
+    twitter: twitterPlayerData,
   };
 }
 
