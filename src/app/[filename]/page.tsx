@@ -55,7 +55,6 @@ export async function generateMetadata({ params }: { params: { filename: string 
     description = `📄 File Name: ${filename}\n📂 File Size: ${fileSize}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
   }
 
-  // Open Graph metadata
   const openGraphData = {
     type: 'website',
     siteName: 'AnonHost',
@@ -120,44 +119,46 @@ export default async function FilePage({ params }: { params: { filename: string 
   }
 
   return (
-    <div className="container">
-      <Card className="p-6 rounded-lg shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">{filename}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {fileType === 'image' ? (
-            <div className="relative aspect-square mb-4">
-              <Image
-                src={imageUrl}
-                alt={filename}
-                draggable="false"
-                layout="fill"
-                objectFit="cover"
-                className="rounded-lg"
-              />
-            </div>
-          ) : fileType === 'video' ? (
-            <video controls className="w-full mb-4">
-              <source src={imageUrl} />
-              Your browser does not support the video tag.
-            </video>
-          ) : fileType === 'text' || fileType === 'code' ? (
-            <SyntaxHighlighter
+    <main className="flex justify-center items-center min-h-screen">
+      <div className="max-w-4xl w-full p-6 bg-gray-900 rounded-lg shadow-lg">
+        <Card className="p-6 rounded-lg shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">{filename}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {fileType === 'image' ? (
+              <div className="relative aspect-square mb-4">
+                <Image
+                  src={imageUrl}
+                  alt={filename}
+                  draggable="false"
+                  fill
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
+            ) : fileType === 'video' ? (
+              <video controls className="w-full mb-4">
+                <source src={imageUrl} />
+                Your browser does not support the video tag.
+              </video>
+            ) : fileType === 'text' || fileType === 'code' ? (
+              <SyntaxHighlighter
                 language={getLanguageFromExtension(filename)}
                 showLineNumbers={true}
                 startingLineNumber={1}
                 style={code as SyntaxHighlighterProps['style']}
                 className="text-white mb-4"
-            >
-              {typeof fileContent === 'string' ? fileContent : ""}
-            </SyntaxHighlighter>
-          ) : (
-            <p className="text-white">Preview unavailable for this file type.</p>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+              >
+                {typeof fileContent === 'string' ? fileContent : ""}
+              </SyntaxHighlighter>
+            ) : (
+              <p className="text-white">Preview unavailable for this file type.</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </main>
   );
 }
 
@@ -165,11 +166,8 @@ function getFileType(filename: string): string {
   const ext = path.extname(filename).toLowerCase();
   switch (ext) {
     case '.jpeg':
-      return 'image';
     case '.png':
-      return 'image';
     case '.jpg':
-      return 'image';
     case '.gif':
       return 'image';
     case '.mp4':
@@ -177,55 +175,30 @@ function getFileType(filename: string): string {
     case '.txt':
       return 'text';
     case '.py':
-      return 'code';
     case '.js':
-      return 'code';
     case '.jsx':
-      return 'code';
     case '.ts':
-      return 'code';
     case '.tsx':
-      return 'code';
     case '.md':
-      return 'code';
     case '.css':
-      return 'code';
     case '.json':
-      return 'code';
     case '.xml':
-      return 'code';
     case '.html':
-      return 'code';
     case '.java':
-      return 'code';
     case '.cpp':
-      return 'code';
     case '.cs':
-      return 'code';
     case '.c':
-      return 'code';
     case '.h':
-      return 'code';
     case '.h++':
-      return 'code';
     case '.hpp':
-      return 'code';
     case '.go':
-      return 'code';
     case '.rb':
-      return 'code';
     case '.sh':
-      return 'code';
     case '.php':
-      return 'code';
     case '.sql':
-      return 'code';
     case '.ps1':
-      return 'code';
     case '.rs':
-      return 'code';
     case '.yaml':
-      return 'code';
     case '.vue':
       return 'code';
     default:
@@ -265,7 +238,7 @@ function getLanguageFromExtension(filename: string): string {
     case '.rs':
       return 'rust';
     case '.vue':
-      return 'vue'
+      return 'vue';
     case '.cpp':
       return 'cpp';
     case '.cs':
@@ -273,9 +246,7 @@ function getLanguageFromExtension(filename: string): string {
     case '.c':
       return 'c';
     case '.h':
-      return 'c';
     case '.h++':
-      return 'cpp';
     case '.hpp':
       return 'cpp';
     case '.go':
@@ -291,7 +262,7 @@ function getLanguageFromExtension(filename: string): string {
     case '.ps1':
       return 'powershell';
     default:
-        return 'plaintext';
+      return 'plaintext';
   }
 }
 
