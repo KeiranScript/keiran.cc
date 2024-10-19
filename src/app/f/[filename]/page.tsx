@@ -118,32 +118,69 @@ function getFileType(filename: string): string {
   const ext = path.extname(filename).toLowerCase();
   switch (ext) {
     case '.jpeg':
-    case '.jpg':
+      return 'image';
     case '.png':
+      return 'image';
+    case '.jpg':
+      return 'image';
     case '.gif':
-        return 'image';
+      return 'image';
     case '.mp4':
-        return 'video';
+      return 'video';
     case '.txt':
-        return 'text';
+      return 'text';
     case '.py':
-        return 'code';
+      return 'code';
     case '.js':
-        return 'code';
+      return 'code';
+    case '.jsx':
+      return 'code';
+    case '.ts':
+      return 'code';
+    case '.tsx':
+      return 'code';
+    case '.md':
+      return 'code';
     case '.css':
-        return 'code';
+      return 'code';
     case '.json':
-        return 'code';
+      return 'code';
     case '.xml':
-        return 'code';
+      return 'code';
     case '.html':
-        return 'code';
+      return 'code';
     case '.java':
-        return 'code';
+      return 'code';
     case '.cpp':
-        return 'code';
+      return 'code';
     case '.cs':
-        return 'code';
+      return 'code';
+    case '.c':
+      return 'code';
+    case '.h':
+      return 'code';
+    case '.h++':
+      return 'code';
+    case '.hpp':
+      return 'code';
+    case '.go':
+      return 'code';
+    case '.rb':
+      return 'code';
+    case '.sh':
+      return 'code';
+    case '.php':
+      return 'code';
+    case '.sql':
+      return 'code';
+    case '.ps1':
+      return 'code';
+    case '.rs':
+      return 'code';
+    case '.yaml':
+      return 'code';
+    case '.vue':
+      return 'code';
     default:
       return 'unknown';
   }
@@ -153,23 +190,59 @@ function getLanguageFromExtension(filename: string): string {
   const ext = path.extname(filename).toLowerCase();
   switch (ext) {
     case '.js':
-        return 'javascript';
+      return 'javascript';
+    case '.jsx':
+      return 'jsx';
+    case '.ts':
+      return 'typescript';
+    case '.tsx':
+      return 'tsx';
+    case '.md':
+      return 'markdown';
+    case '.txt':
+      return 'plaintext';
     case '.css':
-        return 'css';
+      return 'css';
     case '.py':
-        return 'python';
+      return 'python';
     case '.json':
-        return 'json';
+      return 'json';
+    case '.yaml':
+      return 'yaml';
     case '.xml':
-        return 'xml';
+      return 'xml';
     case '.html':
-        return 'html';
+      return 'html';
     case '.java':
-        return 'java';
+      return 'java';
+    case '.rs':
+      return 'rust';
+    case '.vue':
+      return 'vue'
     case '.cpp':
-        return 'cpp';
+      return 'cpp';
     case '.cs':
-        return 'csharp';
+      return 'csharp';
+    case '.c':
+      return 'c';
+    case '.h':
+      return 'c';
+    case '.h++':
+      return 'cpp';
+    case '.hpp':
+      return 'cpp';
+    case '.go':
+      return 'go';
+    case '.rb':
+      return 'ruby';
+    case '.sh':
+      return 'bash';
+    case '.php':
+      return 'php';
+    case '.sql':
+      return 'sql';
+    case '.ps1':
+      return 'powershell';
     default:
         return 'plaintext';
   }
