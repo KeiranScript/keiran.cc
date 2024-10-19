@@ -31,10 +31,13 @@ export async function generateMetadata({ params }: { params: { filename: string 
     description: `File Name: ${filename}\nFile Size: ${fileSize}\nTotal Uploads: ${stats.totalFiles}\nStorage: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`,
     openGraph: {
       type: 'website',
+      siteName: 'AnonHost',
       title: `${filename} - AnonHost`,
-      description: `File Name: ${filename}\nFile Size: ${fileSize}\nTotal Uploads: ${stats.totalFiles}\nStorage: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`,
-      images: [`${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`],
-      url: `${process.env.NEXT_PUBLIC_API_URL}/f/${filename}`,
+      description: `📄 File Name: ${filename}\n📂 File Size: ${fileSize}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`,
+      images: [{
+        url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
+      }],
+      url: `${process.env.NEXT_PUBLIC_API_URL}`,
     },
   };
 }
