@@ -9,7 +9,25 @@ import code from '@/components/code-theme';
 
 const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats`;
 
-export async function generateMetadata({ params }: { params: { filename: string } }): Promise<Metadata> {
+interface OpenGraphVideo {
+  url: string;
+  width?: number;
+  height?: number;
+}
+
+interface CustomOpenGraph extends Metadata {
+  openGraph: {
+    type: string;
+    siteName: string;
+    title: string;
+    description: string;
+    url: string;
+    images: { url: string }[];
+    video?: OpenGraphVideo;
+  };
+}
+
+export async function generateMetadata({ params }: { params: { filename: string } }): Promise<CustomOpenGraph> {
   const { filename } = params;
   const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
 
@@ -26,34 +44,40 @@ export async function generateMetadata({ params }: { params: { filename: string 
   const response = await fetch(STATS_API_URL);
   const stats = await response.json();
 
-  let numberOfLines = 0;
+  let description;
   const fileType = getFileType(filename);
+
   if (fileType === 'code') {
     const fileContent = await fs.readFile(filePath, 'utf-8');
-    numberOfLines = fileContent.split('\n').length;
-  }
-
-  let description;
-  if (fileType === 'code') {
+    const numberOfLines = fileContent.split('\n').length;
     const language = getLanguageFromExtension(filename);
     description = `🌎 Language: ${language}\n✍️ Lines: ${numberOfLines}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
   } else {
     description = `📄 File Name: ${filename}\n📂 File Size: ${fileSize}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
   }
 
-  return {
+  const openGraphData: CustomOpenGraph['openGraph'] = {
+    type: 'website',
+    siteName: 'AnonHost',
     title: `${filename} - AnonHost`,
-    description,
-    openGraph: {
-      type: 'website',
-      siteName: 'AnonHost',
-      title: `${filename} - AnonHost`,
-      description: description,
-      images: [{
-        url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
-      }],
-      url: `${process.env.NEXT_PUBLIC_API_URL}`,
-    },
+    description: description,
+    url: `${process.env.NEXT_PUBLIC_API_URL}`,
+    images: [{
+      url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
+    }],
+  };
+
+  if (fileType === 'video') {
+    openGraphData.type = 'video.other';
+    openGraphData.video = {
+      url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
+      width: 1280,
+      height: 720,
+    };
+  }
+
+  return {
+    openGraph: openGraphData,
   };
 }
 
