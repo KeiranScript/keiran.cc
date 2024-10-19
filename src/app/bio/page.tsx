@@ -68,7 +68,7 @@ function BioContent() {
   };
 
   return (
-    <div className="min-h-screen h-full w-full">
+    <div className="min-h-screen max-h w-full">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

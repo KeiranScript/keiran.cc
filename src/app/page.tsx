@@ -82,15 +82,17 @@ export default function LandingPage() {
       transition: {
         duration: 5,
         repeat: Infinity,
+
         ease: "easeInOut",
       },
     },
   }
 
   return (
+    <div className="relative z-0 overflow-hidden">
       <div className="min-h-screen overflow-hidden relative">
         <motion.div
-          className="container mx-auto px-4 py-16 md:py-24 relative z-10"
+          className="container mx-auto px-4 py-16 md:py-24 relative z-10 overflow-hidden"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -104,7 +106,7 @@ export default function LandingPage() {
               <motion.span variants={titleVariants} className="text-primary">AnonHost</motion.span>
           </motion.h1>
           <motion.div
-            className="text-xl md:text-2xl text-center text-muted-foreground mb-12"
+            className="text-xl md:text-2xl text-center text-muted-foreground mb-12 overflow-hidden"
             variants={itemVariants}
           >
             <TextGenerateEffect
@@ -113,7 +115,7 @@ export default function LandingPage() {
               duration={1.5}
             />
           </motion.div>
-          <motion.div className="flex justify-center mb-16" variants={itemVariants}>
+          <motion.div className="flex justify-center mb-16 overflow-hidden" variants={itemVariants}>
             <Link href="/upload">
               <motion.div
                 variants={buttonVariants}
@@ -163,5 +165,6 @@ export default function LandingPage() {
           </motion.div>
         </motion.div>
       </div>
+    </div>
   )
 }

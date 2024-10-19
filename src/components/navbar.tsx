@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useTheme } from 'next-themes';
+import { usePathname } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Upload, User, BarChart2, Menu, Cat } from 'lucide-react'
-import ThemeSwitcher from '@/components/theme-switcher-button'
+import ThemeSwitcher from '@/components/theme-switcher'
 import {
   Sheet,
   SheetContent,
@@ -14,39 +15,67 @@ import {
 
 const branding = process.env.NEXT_PUBLIC_BRANDING || 'keiran.cc'
 
+const navItems = [
+  { href: '/upload', icon: Upload, label: 'Upload' },
+  // { href: '/bio', icon: User, label: 'Bio' },
+  { href: '/stats', icon: BarChart2, label: 'Stats' },
+  { href: '/gallery', icon: Cat, label: 'Zoe' },
+]
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
-  const { theme, setTheme } = useTheme();
+  const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const NavItems = () => (
     <>
-      <Button variant="ghost" asChild onClick={() => setIsOpen(false)}>
-        <Link href="/upload"><Upload className="mr-2 h-4 w-4" /> Upload</Link>
-      </Button>
-      <Button variant="ghost" asChild onClick={() => setIsOpen(false)}>
-        <Link href="/bio"><User className="mr-2 h-4 w-4" /> Bio</Link>
-      </Button>
-      <Button variant="ghost" asChild onClick={() => setIsOpen(false)}>
-        <Link href="/stats"><BarChart2 className="mr-2 h-4 w-4" /> Stats</Link>
-      </Button>
-      <Button variant="ghost" asChild onClick={() => setIsOpen(false)}>
-        <Link href="/gallery"><Cat className="mr-2 h-4 w-4" /> Zoe</Link>
-      </Button>
+      {navItems.map((item) => (
+        <Button
+          key={item.href}
+          variant={pathname === item.href ? "default" : "ghost"}
+          asChild
+          onClick={() => setIsOpen(false)}
+        >
+          <Link href={item.href} className="flex items-center">
+            <item.icon className="mr-2 h-4 w-4" />
+            {item.label}
+          </Link>
+        </Button>
+      ))}
     </>
   )
 
   return (
-    <nav className="border-b bg-background">
+    <motion.nav
+      className={`sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm transition-shadow ${
+        scrolled ? 'shadow-md' : ''
+      }`}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    >
       <div className="container flex h-16 items-center justify-between px-4">
-        <Link href="/" className="font-bold text-2xl">{branding}</Link>
+        <Link href="/" className="font-bold text-2xl hover:text-primary transition-colors">
+          {branding}
+        </Link>
         <div className="hidden md:flex items-center space-x-4">
           <NavItems />
           <ThemeSwitcher />
         </div>
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center">
+          <ThemeSwitcher />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="ml-2">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
@@ -59,6 +88,6 @@ export default function Navbar() {
           </Sheet>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   )
 }
