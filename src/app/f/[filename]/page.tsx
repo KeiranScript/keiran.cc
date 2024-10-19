@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from 'next/image';
 import { Prism as SyntaxHighlighter, SyntaxHighlighterProps } from 'react-syntax-highlighter';
 import code from '@/components/code-theme';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats`;
 
@@ -22,7 +21,7 @@ export async function generateMetadata({ params }: { params: { filename: string 
     return notFound();
   }
 
-  const fileSize = (fileStats.size / 1024 / 1024).toFixed(2) + ' MB';
+  const fileSize = formatBytes(fileStats.size);
 
   const response = await fetch(STATS_API_URL);
   const stats = await response.json();
@@ -52,7 +51,7 @@ export default async function FilePage({ params }: { params: { filename: string 
     return notFound();
   }
 
-  const fileSize = (fileStats.size / 1024 / 1024).toFixed(2) + ' MB';
+  const fileSize = formatBytes(fileStats.size);
 
   const response = await fetch(STATS_API_URL);
   const stats = await response.json();
@@ -171,4 +170,12 @@ function getLanguageFromExtension(filename: string): string {
     default:
         return 'plaintext';
   }
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
