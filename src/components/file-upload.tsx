@@ -115,7 +115,7 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
       RequestURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/upload`,
       Body: "MultipartFormData",
       FileFormName: "file",
-      URL: "$json:imageUrl$",
+      URL: "$json:rawUrl$",
       ThumbnailURL: "$json:imageUrl$"
     }
   
