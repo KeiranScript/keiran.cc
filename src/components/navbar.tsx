@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Upload, Link as LinkIcon, BarChart2, Menu, Cat, Code } from 'lucide-react'
+import { Upload, Link as LinkIcon, BarChart2, Menu, Cat, Code, Github, Target } from 'lucide-react'
 import ThemeSwitcher from '@/components/theme-switcher'
 import {
   Sheet,
@@ -21,6 +21,7 @@ const navItems = [
   { href: '/pastes', icon: Code, label: 'Pastes' },
   { href: '/stats', icon: BarChart2, label: 'Stats' },
   { href: '/gallery', icon: Cat, label: 'Zoe' },
+  { href: 'https://github.com/KeiranScript/keiran.cc', icon: Github, label: 'Source' },
 ]
 
 export default function Navbar() {

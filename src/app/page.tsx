@@ -112,7 +112,7 @@ export default function LandingPage() {
             <TextGenerateEffect
               className="text-xl md:text-2xl text-center text-muted-foreground mb-12"
               words="Upload and share files anonymously. For free, forever."
-              duration={1.5}
+              duration={1}
             />
           </motion.div>
           <motion.div className="flex justify-center mb-16 overflow-hidden" variants={itemVariants}>
@@ -164,6 +164,9 @@ export default function LandingPage() {
             })}
           </motion.div>
         </motion.div>
+        <div className="text-center py-4">
+          <p className="text-sm text-muted-foreground">Proudly open source on <a href='https://github.com/KeiranScript/keiran.cc' target='_blank'>GitHub</a></p>
+        </div>
       </div>
     </div>
   )
