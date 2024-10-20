@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Upload, User, BarChart2, Menu, Cat } from 'lucide-react'
+import { Upload, Link as LinkIcon, BarChart2, Menu, Cat } from 'lucide-react'
 import ThemeSwitcher from '@/components/theme-switcher'
 import {
   Sheet,
@@ -17,7 +17,7 @@ const branding = process.env.NEXT_PUBLIC_BRANDING || 'keiran.cc'
 
 const navItems = [
   { href: '/upload', icon: Upload, label: 'Upload' },
-  // { href: '/bio', icon: User, label: 'Bio' },
+  { href: '/shorten', icon: LinkIcon, label: 'Shorten' },
   { href: '/stats', icon: BarChart2, label: 'Stats' },
   { href: '/gallery', icon: Cat, label: 'Zoe' },
 ]

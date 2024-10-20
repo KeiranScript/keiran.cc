@@ -141,7 +141,7 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
                 Uploading...
               </>
             ) : uploadSuccess ? (
-              <div className=''>
+              <div className='flex items-center justify-center space-x-4 text-green-500'>
                 <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
                 {buttonLabel}
               </div>
