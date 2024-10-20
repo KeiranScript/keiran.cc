@@ -1,37 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { nanoid } from 'nanoid'
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
+import { sanitizeUrl } from '@braintree/sanitize-url'
+import { z } from 'zod'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
+
+const shortenSchema = z.object({
+  url: z.string().url({ message: "Please enter a valid URL" }).transform(sanitizeUrl),
+  customAlias: z.string().regex(/^[a-zA-Z0-9-_]*$/, { message: "Custom alias can only contain letters, numbers, hyphens, and underscores" }).max(50).optional(),
+  expirationTime: z.string().refine((val) => {
+    if (!val) return true; // Allow empty string
+    const date = new Date(val);
+    return !isNaN(date.getTime());
+  }, { message: "Invalid datetime format" }).optional(),
+})
 
 export async function POST(request: NextRequest) {
   try {
-    const { url, customAlias, expirationTime } = await request.json()
+    const body = await request.json()
+    const { url, customAlias, expirationTime } = shortenSchema.parse(body)
 
-    if (!url) {
-      return NextResponse.json({ error: 'URL is required' }, { status: 400 })
-    }
-
-    const urlPattern = new RegExp('^(https?:\\/\\/)?'+
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+
-      '(\\#[-a-z\\d_]*)?$','i')
-    if (!urlPattern.test(url)) {
-      return NextResponse.json({ error: 'Invalid URL format' }, { status: 400 })
-    }
-
-    const shortCode = customAlias || nanoid(6)
+    let shortCode = customAlias || nanoid(6)
     const maxExpirationTime = 30 * 24 * 60 * 60 * 1000 // 30 days in milliseconds
     const defaultExpirationTime = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
 
     let expiration = new Date(Date.now() + defaultExpirationTime)
     if (expirationTime) {
       const customExpiration = new Date(expirationTime).getTime()
-      expiration = new Date(
-        Math.min(customExpiration, Date.now() + maxExpirationTime)
-      )
+      if (customExpiration > Date.now() + maxExpirationTime) {
+        expiration = new Date(Date.now() + maxExpirationTime)
+      } else {
+        expiration = new Date(customExpiration)
+      }
     }
 
     if (customAlias) {
@@ -54,6 +55,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ shortUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/s/${shortUrl.shortCode}` })
   } catch (error) {
     console.error('Error shortening URL:', error)
+    if (error instanceof z.ZodError) {
+      const errorMessages = error.errors.map(err => `${err.path.join('.')}: ${err.message}`).join(', ')
+      return NextResponse.json({ error: errorMessages }, { status: 400 })
+    }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

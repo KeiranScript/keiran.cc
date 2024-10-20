@@ -14,18 +14,19 @@ datasource db {
 }
 
 model ShortUrl {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   originalUrl String
   shortCode   String   @unique
-  expiresAt   DateTime
   createdAt   DateTime @default(now())
+  expiresAt   DateTime?
 }
 
-model Pastes {
-  id          String   @id
+model Paste {
+  id          String   @id @default(uuid())
   title       String
   description String?
-  content     String
+  content     String   @db.Text
   language    String
   createdAt   DateTime @default(now())
+  expiresAt   DateTime?
 }

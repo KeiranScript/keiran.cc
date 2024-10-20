@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { motion } from 'framer-motion'
@@ -14,13 +16,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from '@/components/ui/use-toast'
 import { Loader2, Copy, ExternalLink } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
-type FormData = {
-  title: string
-  description: string
-  content: string
-  language: string
-}
+const formSchema = z.object({
+  title: z.string().min(1, "Title is required").max(100, "Title must be 100 characters or less"),
+  description: z.string().max(500, "Description must be 500 characters or less").optional(),
+  content: z.string().min(1, "Content is required").max(100000, "Content must be 100,000 characters or less"),
+  language: z.string().min(1, "Language is required"),
+  expirationTime: z.string().optional(),
+})
+
+type FormData = z.infer<typeof formSchema>
 
 const languageOptions = [
   { value: 'plaintext', label: 'Plain Text' },
@@ -41,7 +47,8 @@ const languageOptions = [
 export default function PastePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [pasteUrl, setPasteUrl] = useState<string | null>(null)
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
+  const { control, register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       language: 'plaintext'
     }
@@ -65,9 +72,9 @@ export default function PastePage() {
 
       const result = await response.json()
       setPasteUrl(result.url)
-      toast.success('Paste created successfully!')
+      toast("Paste created successfully!")
     } catch (error) {
-      toast.error('Failed to create paste')
+      toast("Error! An unexpected error occurred")
     } finally {
       setIsLoading(false)
     }
@@ -90,37 +97,51 @@ export default function PastePage() {
                 <Label htmlFor="title">Title</Label>
                 <Input
                   id="title"
-                  {...register('title', { required: 'Title is required' })}
+                  {...register('title')}
                   placeholder="Enter a title for your paste"
                 />
                 {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
               </div>
               <div>
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Description (Optional)</Label>
                 <Textarea
                   id="description"
                   {...register('description')}
                   placeholder="Enter an optional description"
                   rows={3}
                 />
+                {errors.description && <p className="text-sm text-destructive mt-1">{errors.description.message}</p>}
               </div>
               <div>
                 <Label htmlFor="language">Language</Label>
-                <Select
-                  onValueChange={(value) => setValue('language', value)}
-                  defaultValue="plaintext"
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {languageOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="language"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {languageOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.language && <p className="text-sm text-destructive mt-1">{errors.language.message}</p>}
+              </div>
+              <div>
+                <Label htmlFor="expirationTime">Expiration Time (Optional)</Label>
+                <Input
+                  id="expirationTime"
+                  type="datetime-local"
+                  {...register('expirationTime')}
+                />
+                <p className="text-sm text-muted-foreground mt-1">Default: 7 days, Max: 30 days</p>
               </div>
               <Tabs defaultValue="editor">
                 <TabsList className="grid w-full grid-cols-2">
@@ -129,7 +150,7 @@ export default function PastePage() {
                 </TabsList>
                 <TabsContent value="editor">
                   <Textarea
-                    {...register('content', { required: 'Content is required' })}
+                    {...register('content')}
                     placeholder="Enter your code or text here"
                     rows={15}
                     className="font-mono"
@@ -159,7 +180,12 @@ export default function PastePage() {
               </Button>
             </form>
             {pasteUrl && (
-              <div className="mt-4">
+              <motion.div
+                className="mt-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
                 <Label htmlFor="pasteUrl">Paste URL</Label>
                 <div className="flex mt-1">
                   <Input
@@ -168,27 +194,46 @@ export default function PastePage() {
                     readOnly
                     className="flex-grow"
                   />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="ml-2"
-                    onClick={() => {
-                      navigator.clipboard.writeText(pasteUrl)
-                      toast.success('URL copied to clipboard!')
-                    }}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="ml-2"
-                    onClick={() => window.open(pasteUrl, '_blank')}
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="ml-2"
+                          onClick={() => {
+                            navigator.clipboard.writeText(pasteUrl)
+                            toast.success("Copied to clipboard!")
+                          }}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Copy to clipboard</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="ml-2"
+                          onClick={() => window.open(pasteUrl, '_blank')}
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Open in new tab</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
-              </div>
+              </motion.div>
             )}
           </CardContent>
         </Card>

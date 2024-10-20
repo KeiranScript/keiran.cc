@@ -8,7 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 const prisma = new PrismaClient()
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const paste = await prisma.pastes.findUnique({
+  if (!params?.id) {
+    return {
+      title: 'Paste Not Found',
+    }
+  }
+
+  const paste = await prisma.paste.findUnique({
     where: { id: params.id },
   })
 
@@ -30,7 +36,11 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 export default async function PasteView({ params }: { params: { id: string } }) {
-  const paste = await prisma.pastes.findUnique({
+  if (!params?.id) {
+    notFound()
+  }
+
+  const paste = await prisma.paste.findUnique({
     where: { id: params.id },
   })
 

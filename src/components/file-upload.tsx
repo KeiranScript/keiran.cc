@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Upload, Loader2, File, CheckCircle } from 'lucide-react'
+import { Upload, Loader2, File, CheckCircle, Download, Link } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import confetti from 'canvas-confetti'
 import FileUrlDisplay from '@/components/file-url-display'
@@ -105,7 +105,41 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
       setUploading(false)
       setFile(null)
     }
-  }  
+  }
+
+  const generateShareXConfig = () => {
+    const config = {
+      Name: "AnonHost",
+      DestinationType: "ImageUploader, TextUploader, FileUploader",
+      RequestMethod: "POST",
+      RequestURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/upload`,
+      Body: "MultipartFormData",
+      FileFormName: "file",
+      URL: "$json:imageUrl$",
+      ThumbnailURL: "$json:imageUrl$"
+    }
+  
+    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'AnonHost.sxcu'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  
+    setToast('ShareX Config Generated', 'The ShareX configuration file has been downloaded.')
+  }
+  
+
+  const copyRawLink = () => {
+    if (uploadedFileUrl) {
+      const rawUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api${uploadedFileUrl}`
+      navigator.clipboard.writeText(rawUrl)
+      setToast('Raw Link Copied', 'The raw file link has been copied to your clipboard.')
+    }
+  }
 
   return (
     <Card className="w-full max-w-2xl mx-auto overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl">
@@ -128,7 +162,7 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
             </div>
           )}
         </div>
-        <div className="mt-6 flex justify-center">
+        <div className="mt-6 flex justify-center space-x-4">
           <Button
             onClick={handleUpload}
             disabled={!file || uploading}
@@ -152,6 +186,14 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
               </>
             )}
           </Button>
+          <Button
+            onClick={generateShareXConfig}
+            variant='outline'
+            className="px-6 py-2 text-lg"
+          >
+            <Download className="mr-2 h-5 w-5" />
+            ShareX Config
+          </Button>
         </div>
         {uploading && (
           <div className="mt-4">
@@ -162,6 +204,17 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
         {uploadedFileUrl && (
           <div className="mt-6">
             <FileUrlDisplay url={uploadedFileUrl} />
+            <div className="mt-2 flex justify-end">
+              <Button
+                onClick={copyRawLink}
+                variant='outline'
+                size='sm'
+                className="text-sm"
+              >
+                <Link className="mr-2 h-4 w-4" />
+                Copy Raw Link
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>
