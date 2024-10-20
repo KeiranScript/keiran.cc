@@ -30,6 +30,11 @@ const getImages = async (): Promise<ImageData[]> => {
     { id: 9, src: '/zoe/image9.jpg', alt: 'Zoe Image 9', metadata: { size: '166 KB', dimensions: '4000x3000', type: 'JPEG' } },
     { id: 10, src: '/zoe/image10.jpg', alt: 'Zoe Image 10', metadata: { size: '40 KB', dimensions: '1000x750', type: 'JPEG' } },
     { id: 11, src: '/zoe/image11.jpg', alt: 'Zoe Image 11', metadata: { size: '288 KB', dimensions: '4000x3000', type: 'JPEG' } },
+    { id: 12, src: '/zoe/image12.jpg', alt: 'Zoe Image 12', metadata: { size: '23.6 KB', dimensions: '1079x823', type: 'JPEG' } },
+    { id: 13, src: '/zoe/image13.jpg', alt: 'Zoe Image 13', metadata: { size: '493 KB', dimensions: '2944x2208', type: 'JPEG' } },
+    { id: 14, src: '/zoe/image14.jpg', alt: 'Zoe Image 14', metadata: { size: '24 KB', dimensions: '720x960', type: 'JPEG' } },
+    { id: 15, src: '/zoe/image15.jpg', alt: 'Zoe Image 15', metadata: { size: '39 KB', dimensions: '900x900', type: 'JPEG' } },
+    { id: 16, src: '/zoe/image16.jpg', alt: 'Zoe Image 16', metadata: { size: '734 KB', dimensions: '3000x4000', type: 'JPEG' } },
   ];
 };
 
@@ -84,7 +89,8 @@ const GalleryContent = () => {
 
 const Gallery = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className=''>Loading...</div>}>
+
       <GalleryContent />
     </Suspense>
   );

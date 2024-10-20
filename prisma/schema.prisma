@@ -20,3 +20,12 @@ model ShortUrl {
   expiresAt   DateTime
   createdAt   DateTime @default(now())
 }
+
+model Pastes {
+  id          String   @id
+  title       String
+  description String?
+  content     String
+  language    String
+  createdAt   DateTime @default(now())
+}
