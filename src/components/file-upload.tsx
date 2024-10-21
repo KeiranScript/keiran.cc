@@ -12,10 +12,16 @@ import FileUrlDisplay from '@/components/file-url-display'
 const MAX_FILE_SIZE = 1024 * 1024 * 1024 // 1GB in bytes
 const CHUNK_SIZE = 1024 * 1024 * 10 // 10MB in bytes
 
-export default function FileUpload({ setToast }: { setToast: (message: string, description: string) => void }) {
+export default function FileUpload({
+  setToast,
+  setUploadedFileUrl,
+}: {
+  setToast: (message: string, description: string) => void;
+  setUploadedFileUrl: (url: string | null) => void;
+}) {
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
-  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null)
+  const [localUploadedFileUrl, setLocalUploadedFileUrl] = useState<string | null>(null)
   const [uploadSuccess, setUploadSuccess] = useState(false)
   const [buttonLabel, setButtonLabel] = useState('Upload')
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -90,7 +96,7 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
       }
   
       const data = await finalizeResponse.json()
-      setUploadedFileUrl(data.url)
+      setLocalUploadedFileUrl(data.url)
       setUploadSuccess(true)
       setButtonLabel('Uploaded')
   
@@ -134,8 +140,8 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
   
 
   const copyRawLink = () => {
-    if (uploadedFileUrl) {
-      const rawUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api${uploadedFileUrl}`
+    if (localUploadedFileUrl) {
+      const rawUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api${localUploadedFileUrl}`
       navigator.clipboard.writeText(rawUrl)
       setToast('Raw Link Copied', 'The raw file link has been copied to your clipboard.')
     }
@@ -201,9 +207,9 @@ export default function FileUpload({ setToast }: { setToast: (message: string, d
             <p className="text-sm text-center mt-2 text-muted-foreground">{Math.round(uploadProgress)}% uploaded</p>
           </div>
         )}
-        {uploadedFileUrl && (
+        {localUploadedFileUrl && (
           <div className="mt-6">
-            <FileUrlDisplay url={uploadedFileUrl} />
+            <FileUrlDisplay url={localUploadedFileUrl} />
             <div className="mt-2 flex justify-end">
               <Button
                 onClick={copyRawLink}
