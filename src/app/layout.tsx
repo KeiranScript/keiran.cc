@@ -20,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className='dark'>
       <body className={cn(
-        "w-full dark:bg-black bg-white  dark:bg-grid-white/[0.2] bg-grid-black/[0.2] overflow-auto",
+        "w-full min-h-screen dark:bg-black bg-white dark:bg-grid-white/[0.2] bg-grid-black/[0.2] overflow-y-auto",
         inter.className
       )}>
-        <div className='absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]'></div>
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="absolute inset-0 dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] opacity-80" />
+        </div>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <div className="relative flex min-h-screen flex-col">
             <Navbar />

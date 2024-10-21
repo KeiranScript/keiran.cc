@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Upload, Link as LinkIcon, BarChart2, Menu, Cat, Code, Github, Target } from 'lucide-react'
+import { Upload, Link as LinkIcon, BarChart2, Menu, Cat, Code, Github, Music } from 'lucide-react'
 import ThemeSwitcher from '@/components/theme-switcher'
 import {
   Sheet,
@@ -20,7 +20,7 @@ const navItems = [
   { href: '/shorten', icon: LinkIcon, label: 'Shorten' },
   { href: '/pastes', icon: Code, label: 'Pastes' },
   { href: '/stats', icon: BarChart2, label: 'Stats' },
-  { href: '/gallery', icon: Cat, label: 'Zoe' },
+  { href: '/gallery', icon: Cat, label: 'Gallery' },
   { href: 'https://github.com/KeiranScript/keiran.cc', icon: Github, label: 'Source' },
 ]
 
@@ -41,17 +41,22 @@ export default function Navbar() {
   const NavItems = () => (
     <>
       {navItems.map((item) => (
-        <Button
+        <motion.div
           key={item.href}
-          variant={pathname === item.href ? "default" : "ghost"}
-          asChild
-          onClick={() => setIsOpen(false)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <Link href={item.href} className="flex items-center">
-            <item.icon className="mr-2 h-4 w-4" />
-            {item.label}
-          </Link>
-        </Button>
+          <Button
+            variant={pathname === item.href ? "default" : "ghost"}
+            asChild
+            onClick={() => setIsOpen(false)}
+          >
+            <Link href={item.href} className="flex items-center">
+              <item.icon className="mr-2 h-4 w-4" />
+              {item.label}
+            </Link>
+          </Button>
+        </motion.div>
       ))}
     </>
   )

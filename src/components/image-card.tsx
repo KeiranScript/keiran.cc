@@ -24,7 +24,7 @@ export const ImageCard = ({ image }: { image: ImageData }) => {
   const handleSave = () => {
     const link = document.createElement('a');
     link.href = image.src;
-    link.download = `zoe-image-${image.id}.${image.metadata?.type.toLowerCase()}`;
+    link.download = `image-${image.id}.${image.metadata?.type.toLowerCase()}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
