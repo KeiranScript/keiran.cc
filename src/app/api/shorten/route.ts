@@ -59,6 +59,11 @@ export async function POST(request: NextRequest) {
       const errorMessages = error.errors.map(err => `${err.path.join('.')}: ${err.message}`).join(', ')
       return NextResponse.json({ error: errorMessages }, { status: 400 })
     }
+    if (error instanceof Error) {
+      console.error('Detailed error:', error.message, error.stack)
+    }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } finally {
+    await prisma.$disconnect()
   }
 }

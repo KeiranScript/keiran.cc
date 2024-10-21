@@ -1,62 +1,69 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
 import { nanoid } from 'nanoid'
+import { PrismaClient } from '@prisma/client'
+import { sanitizeUrl } from '@braintree/sanitize-url'
 import { z } from 'zod'
-import DOMPurify from 'isomorphic-dompurify'
 
 const prisma = new PrismaClient()
 
-const pasteSchema = z.object({
-  title: z.string().min(1).max(100),
-  description: z.string().max(500).optional(),
-  content: z.string().min(1).max(100000),
-  language: z.string().max(50),
-  expirationTime: z.string().optional(),
+const shortenSchema = z.object({
+  url: z.string().url({ message: "Please enter a valid URL" }).transform(sanitizeUrl),
+  customAlias: z.string().regex(/^[a-zA-Z0-9-_]*$/, { message: "Custom alias can only contain letters, numbers, hyphens, and underscores" }).max(50).optional(),
+  expirationTime: z.string().refine((val) => {
+    if (!val) return true; // Allow empty string
+    const date = new Date(val);
+    return !isNaN(date.getTime());
+  }, { message: "Invalid datetime format" }).optional(),
 })
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    console.log('Request body:', body); // Debugging
-    const { title, description, content, language, expirationTime } = pasteSchema.parse(body);
+    const body = await request.json()
+    const { url, customAlias, expirationTime } = shortenSchema.parse(body)
 
-    const sanitizedContent = DOMPurify.sanitize(content);
+    let shortCode = customAlias || nanoid(6)
+    const maxExpirationTime = 30 * 24 * 60 * 60 * 1000 // 30 days in milliseconds
+    const defaultExpirationTime = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
 
-    const pasteId = nanoid(10);
-    const maxExpirationTime = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
-    const defaultExpirationTime = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-
-    let expiration = new Date(Date.now() + defaultExpirationTime);
+    let expiration = new Date(Date.now() + defaultExpirationTime)
     if (expirationTime) {
-      const customExpiration = new Date(expirationTime).getTime();
-      if (!isNaN(customExpiration)) {
-        if (customExpiration > Date.now() + maxExpirationTime) {
-          expiration = new Date(Date.now() + maxExpirationTime);
-        } else {
-          expiration = new Date(customExpiration);
-        }
+      const customExpiration = new Date(expirationTime).getTime()
+      if (customExpiration > Date.now() + maxExpirationTime) {
+        expiration = new Date(Date.now() + maxExpirationTime)
+      } else {
+        expiration = new Date(customExpiration)
       }
     }
 
-    const paste = await prisma.paste.create({
+    if (customAlias) {
+      const existingUrl = await prisma.shortUrl.findUnique({
+        where: { shortCode: customAlias },
+      })
+      if (existingUrl) {
+        return NextResponse.json({ error: 'Custom alias already in use' }, { status: 409 })
+      }
+    }
+
+    const shortUrl = await prisma.shortUrl.create({
       data: {
-        id: pasteId,
-        title,
-        description,
-        content: sanitizedContent,
-        language,
+        originalUrl: url,
+        shortCode,
         expiresAt: expiration,
       },
-    });
+    })
 
-    const pasteUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/paste/${paste.id}`;
-
-    return NextResponse.json({ url: pasteUrl });
+    return NextResponse.json({ shortUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/s/${shortUrl.shortCode}` })
   } catch (error) {
+    console.error('Error shortening URL:', error)
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
+      const errorMessages = error.errors.map(err => `${err.path.join('.')}: ${err.message}`).join(', ')
+      return NextResponse.json({ error: errorMessages }, { status: 400 })
     }
-    console.error('Error creating paste:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    if (error instanceof Error) {
+      console.error('Detailed error:', error.message, error.stack)
+    }
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } finally {
+    await prisma.$disconnect()
   }
 }
