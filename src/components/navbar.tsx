@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -24,10 +24,16 @@ const navItems = [
   { href: 'https://github.com/KeiranScript/keiran.cc', icon: Github, label: 'Source' },
 ]
 
+const tracks = [
+  '/tracks/linqfy.mp3',
+]
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
   const pathname = usePathname()
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +43,20 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const playRandomTrack = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause()
+        setIsPlaying(false)
+      } else {
+        const randomTrack = tracks[Math.floor(Math.random() * tracks.length)]
+        audioRef.current.src = randomTrack
+        audioRef.current.play()
+        setIsPlaying(true)
+      }
+    }
+  }
 
   const NavItems = () => (
     <>
@@ -63,9 +83,8 @@ export default function Navbar() {
 
   return (
     <motion.nav
-      className={`sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm transition-shadow ${
-        scrolled ? 'shadow-md' : ''
-      }`}
+      className={`sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm transition-shadow ${scrolled ? 'shadow-md' : ''
+        }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -76,9 +95,27 @@ export default function Navbar() {
         </Link>
         <div className="hidden md:flex items-center space-x-4">
           <NavItems />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={playRandomTrack}
+            className={`transition-colors ${isPlaying ? 'text-primary' : ''}`}
+          >
+            <Music className="h-6 w-6" />
+            <span className="sr-only">{isPlaying ? 'Pause' : 'Play'} random track</span>
+          </Button>
           <ThemeSwitcher />
         </div>
         <div className="md:hidden flex items-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={playRandomTrack}
+            className={`transition-colors ${isPlaying ? 'text-primary' : ''}`}
+          >
+            <Music className="h-6 w-6" />
+            <span className="sr-only">{isPlaying ? 'Pause' : 'Play'} random track</span>
+          </Button>
           <ThemeSwitcher />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
@@ -95,6 +132,7 @@ export default function Navbar() {
           </Sheet>
         </div>
       </div>
+      <audio ref={audioRef} />
     </motion.nav>
   )
 }
