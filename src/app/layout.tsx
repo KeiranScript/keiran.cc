@@ -4,15 +4,16 @@ import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/components/theme-provider'
 import Navbar from '@/components/navbar'
 import { Toaster } from '@/components/ui/toaster'
+import type { Metadata } from 'next'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'AnonHost',
   description: 'Free and Anonymous file hosting',
   icons: {
     icon: '/hero.png',
-  },
+  }
 }
 
 export default function RootLayout({

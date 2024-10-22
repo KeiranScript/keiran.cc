@@ -41,21 +41,14 @@ export async function generateMetadata({ params }: { params: { filename: string 
     siteName: 'AnonHost',
     title: `${filename} - AnonHost`,
     description: description,
-    url: `${process.env.NEXT_PUBLIC_API_URL}/uploads/${filename}`,
+    url: `${process.env.NEXT_PUBLIC_API_URL}`,
     images: [{
       url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
     }],
   };
 
-  const twitterPlayerData: Record<string, string> = {
-    'twitter:card': 'player',
-    'twitter:title': `${filename} - AnonHost`,
-    'twitter:description': description,
-    'twitter:player': `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
-    'twitter:player:width': '1280',
-    'twitter:player:height': '720',
-    'twitter:player:stream': `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
-    'twitter:image': `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
+  const twitterData: Record<string, string> = {
+    'twitter:card': 'summary_large_image',
   };
 
   if (fileType === 'video') {
@@ -64,7 +57,7 @@ export async function generateMetadata({ params }: { params: { filename: string 
 
   return {
     openGraph: openGraphData,
-    twitter: twitterPlayerData,
+    twitter: twitterData,
   };
 }
 
