@@ -26,7 +26,7 @@ const navItems = [
 
 const tracks = [
   '/tracks/linqfy.mp3',
-  '/tracks/iwtm.mp3',
+  '/tracks/iwtm.ogx',
 ]
 
 export default function Navbar() {
@@ -102,7 +102,7 @@ export default function Navbar() {
             onClick={playRandomTrack}
             className={`transition-colors ${isPlaying ? 'text-primary' : ''}`}
           >
-            <Music className="h-6 w-6" />
+            <Music className="h-5 w-5" />
             <span className="sr-only">{isPlaying ? 'Pause' : 'Play'} random track</span>
           </Button>
           <ThemeSwitcher />
