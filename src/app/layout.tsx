@@ -8,8 +8,11 @@ import { Toaster } from '@/components/ui/toaster'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'keiran.cc',
-  description: 'ill write this later ig',
+  title: 'AnonHost',
+  description: 'Free and Anonymous file hosting',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
