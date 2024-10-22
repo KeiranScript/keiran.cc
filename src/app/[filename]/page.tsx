@@ -1,4 +1,3 @@
-import { Metadata } from 'next';
 import path from 'path';
 import fs from 'fs/promises';
 import { notFound } from 'next/navigation';
@@ -8,24 +7,6 @@ import { Prism as SyntaxHighlighter, SyntaxHighlighterProps } from 'react-syntax
 import code from '@/components/code-theme';
 
 const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats`;
-
-interface OpenGraphVideo {
-  url: string;
-  width?: number;
-  height?: number;
-}
-
-interface CustomOpenGraph extends Metadata {
-  openGraph: {
-    type: string;
-    siteName: string;
-    title: string;
-    description: string;
-    url: string;
-    images: { url: string }[];
-    video?: OpenGraphVideo;
-  };
-}
 
 export async function generateMetadata({ params }: { params: { filename: string } }) {
   const { filename } = params;
@@ -66,7 +47,6 @@ export async function generateMetadata({ params }: { params: { filename: string 
     }],
   };
 
-  // Twitter Player metadata for video
   const twitterPlayerData: Record<string, string> = {
     'twitter:card': 'player',
     'twitter:title': `${filename} - AnonHost`,
@@ -100,11 +80,6 @@ export default async function FilePage({ params }: { params: { filename: string 
     return notFound();
   }
 
-  const fileSize = formatBytes(fileStats.size);
-
-  const response = await fetch(STATS_API_URL);
-  const stats = await response.json();
-
   const imageUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`;
   const fileType = getFileType(filename);
 
@@ -120,7 +95,7 @@ export default async function FilePage({ params }: { params: { filename: string 
 
   return (
     <main className="flex justify-center items-center min-h-screen">
-      <div className="max-w-4xl w-full p-6 bg-gray-900 rounded-lg shadow-lg">
+      <div className="max-w-4xl w-full p-6 rounded-lg shadow-lg">
         <Card className="p-6 rounded-lg shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center">{filename}</CardTitle>

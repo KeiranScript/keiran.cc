@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { PrismaClient } from '@prisma/client'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import code from '@/components/code-theme';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const prisma = new PrismaClient()
@@ -60,7 +60,7 @@ export default async function PasteView({ params }: { params: { id: string } }) 
         <CardContent>
           <SyntaxHighlighter
             language={paste.language}
-            style={vscDarkPlus}
+            style={code as SyntaxHighlighter['props']['style']}
             className="rounded-md"
             showLineNumbers
           >

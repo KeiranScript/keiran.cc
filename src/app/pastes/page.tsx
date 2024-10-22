@@ -30,18 +30,59 @@ type FormData = z.infer<typeof formSchema>
 
 const languageOptions = [
   { value: 'plaintext', label: 'Plain Text' },
-  { value: 'javascript', label: 'JavaScript' },
-  { value: 'python', label: 'Python' },
-  { value: 'java', label: 'Java' },
-  { value: 'csharp', label: 'C#' },
+  { value: 'autohotkey ', label: 'Autohotkey' },
+  { value: 'bash', label: 'Bash' },
+  { value: 'basic', label: 'Basic' },
+  { value: 'birb', label: 'Birb' },
+  { value: 'brainfuck', label: 'Brainfuck' },
+  { value: 'c', label: 'C' },
+  { value: 'clojure', label: 'Clojure' },
+  { value: 'cmake', label: 'CMake' },
+  { value: 'cobol', label: 'Cobol' },
+  { value: 'coffeescript', label: 'Coffeescript' },
   { value: 'cpp', label: 'C++' },
-  { value: 'ruby', label: 'Ruby' },
-  { value: 'go', label: 'Go' },
-  { value: 'rust', label: 'Rust' },
-  { value: 'php', label: 'PHP' },
-  { value: 'html', label: 'HTML' },
+  { value: 'crystal', label: 'Crystal' },
   { value: 'css', label: 'CSS' },
+  { value: 'csharp', label: 'C#' },
+  { value: 'd', label: 'D' },
+  { value: 'dart', label: 'Dart' },
+  { value: 'django', label: 'Django' },
+  { value: 'elixir', label: 'Elixir' },
+  { value: 'elm', label: 'Elm' },
+  { value: 'erlang', label: 'Erlang' },
+  { value: 'fortran', label: 'Fortran' },
+  { value: 'fsharp', label: 'F#' },
+  { value: 'gdscript', label: 'GDScript' },
+  { value: 'go', label: 'Go' },
+  { value: 'html', label: 'HTML' },
+  { value: 'java', label: 'Java' },
+  { value: 'javascript', label: 'JavaScript' },
+  { value: 'json', label: 'JSON' },
+  { value: 'jsx', label: 'JSX' },
+  { value: 'kotlin', label: 'Kotlin' },
+  { value: 'lua', label: 'Lua' },
   { value: 'markdown', label: 'Markdown' },
+  { value: 'nim', label: 'Nim' },
+  { value: 'nix', label: 'Nix' },
+  { value: 'objective-c', label: 'Objective-C' },
+  { value: 'ocaml', label: 'OCaml' },
+  { value: 'pascal', label: 'Pascal' },
+  { value: 'perl', label: 'Perl' },
+  { value: 'php', label: 'PHP' },
+  { value: 'python', label: 'Python' },
+  { value: 'ruby', label: 'Ruby' },
+  { value: 'rust', label: 'Rust' },
+  { value: 'scala', label: 'Scala' },
+  { value: 'scss', label: 'SCSS' },
+  { value: 'sql', label: 'SQL' },
+  { value: 'swift', label: 'Swift' },
+  { value: 'toml', label: 'TOML' },
+  { value: 'tsx', label: 'TSX' },
+  { value: 'typescript', label: 'TypeScript' },
+  { value: 'v', label: 'V' },
+  { value: 'vim', label: 'Vim' },
+  { value: 'yaml', label: 'YAML' },
+  { value: 'zig', label: 'Zig' },
 ]
 
 export default function PastePage() {
@@ -196,7 +237,7 @@ export default function PastePage() {
                   />
                   <TooltipProvider>
                     <Tooltip>
-                      
+
                       <TooltipTrigger asChild>
                         <Button
                           type="button"
