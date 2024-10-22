@@ -26,6 +26,7 @@ const navItems = [
 
 const tracks = [
   '/tracks/linqfy.mp3',
+  '/tracks/iwtm.mp3',
 ]
 
 export default function Navbar() {
