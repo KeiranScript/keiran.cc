@@ -7,7 +7,7 @@ import { Prism as SyntaxHighlighter, SyntaxHighlighterProps } from 'react-syntax
 import code from '@/components/code-theme'
 import Image from 'next/image'
 
-const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats`
+const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats/`
 
 export async function generateMetadata({ params }: { params: { filename: string } }): Promise<Metadata> {
   const { filename } = params
