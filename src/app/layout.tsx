@@ -11,7 +11,7 @@ export const metadata = {
   title: 'AnonHost',
   description: 'Free and Anonymous file hosting',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/hero.png',
   },
 }
 
