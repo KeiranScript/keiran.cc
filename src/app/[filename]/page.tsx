@@ -1,64 +1,67 @@
-import path from 'path';
-import fs from 'fs/promises';
-import { notFound } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from 'next/image';
-import { Prism as SyntaxHighlighter, SyntaxHighlighterProps } from 'react-syntax-highlighter';
-import code from '@/components/code-theme';
+import { Metadata } from 'next'
+import path from 'path'
+import fs from 'fs/promises'
+import { notFound } from 'next/navigation'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Prism as SyntaxHighlighter, SyntaxHighlighterProps } from 'react-syntax-highlighter'
+import code from '@/components/code-theme'
+import Image from 'next/image'
 
-const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats`;
+const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats`
 
-export async function generateMetadata({ params }: { params: { filename: string } }) {
-  const { filename } = params;
-  const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
+export async function generateMetadata({ params }: { params: { filename: string } }): Promise<Metadata> {
+  const { filename } = params
+  const filePath = path.join(process.cwd(), 'public', 'uploads', filename)
 
-  let fileStats;
-
+  let fileStats
   try {
-    fileStats = await fs.stat(filePath);
+    fileStats = await fs.stat(filePath)
   } catch (error) {
-    return notFound();
+    return notFound()
   }
 
-  const fileSize = formatBytes(fileStats.size);
-  const response = await fetch(STATS_API_URL);
-  const stats = await response.json();
+  const fileSize = formatBytes(fileStats.size)
+  const response = await fetch(STATS_API_URL)
+  const stats = await response.json()
 
-  let description;
-  const fileType = getFileType(filename);
+  const fileType = getFileType(filename)
+  let description: string
+  let numberOfLines: number | undefined
 
   if (fileType === 'code') {
-    const fileContent = await fs.readFile(filePath, 'utf-8');
-    const numberOfLines = fileContent.split('\n').length;
-    const language = getLanguageFromExtension(filename);
-    description = `🌎 Language: ${language}\n✍️ Lines: ${numberOfLines}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
+    const fileContent = await fs.readFile(filePath, 'utf-8')
+    numberOfLines = fileContent.split('\n').length
+    const language = getLanguageFromExtension(filename)
+    description = `🌎 Language: ${language}\n✍️ Lines: ${numberOfLines}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`
   } else {
-    description = `📄 File Name: ${filename}\n📂 File Size: ${fileSize}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
+    description = `📄 File Name: ${filename}\n📂 File Size: ${fileSize}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`
   }
 
-  const openGraphData = {
-    type: 'website',
-    siteName: 'AnonHost',
+  const metadata: Metadata = {
     title: `${filename} - AnonHost`,
-    description: description,
-    url: `${process.env.NEXT_PUBLIC_API_URL}`,
-    images: [{
-      url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
-    }],
-  };
-
-  const twitterData: Record<string, string> = {
-    'twitter:card': 'summary_large_image',
-  };
-
-  if (fileType === 'video') {
-    openGraphData.type = 'video.other';
+    description,
+    openGraph: {
+      title: `${filename} - AnonHost`,
+      description,
+      type: fileType === 'video' ? 'video.other' : 'website',
+      url: `${process.env.NEXT_PUBLIC_API_URL}/uploads/${filename}`,
+      siteName: 'AnonHost',
+      images: [{
+        url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
+        width: 1200,
+        height: 630,
+        alt: `Preview of ${filename}`,
+      }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${filename} - AnonHost`,
+      description,
+      images: [`${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`],
+    },
   }
 
-  return {
-    openGraph: openGraphData,
-    twitter: twitterData,
-  };
+  return metadata
 }
 
 export default async function FilePage({ params }: { params: { filename: string } }) {

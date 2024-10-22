@@ -43,7 +43,7 @@ export default function FileUpload({
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0]
     if (selectedFile.size > MAX_FILE_SIZE) {
-      setToast('File too large', 'Maximum file size is 1GB.')
+      // setToast('File too large', 'Maximum file size is 1GB.')
     } else {
       setFile(selectedFile)
     }
@@ -99,6 +99,7 @@ export default function FileUpload({
       setLocalUploadedFileUrl(data.url)
       setUploadSuccess(true)
       setButtonLabel('Uploaded')
+      // setToast('Uploaded Successfully', 'Your file has been uploaded successfully! :D')
   
       setTimeout(() => {
         setButtonLabel('Upload')
@@ -116,13 +117,13 @@ export default function FileUpload({
   const generateShareXConfig = () => {
     const config = {
       Name: "AnonHost",
-      DestinationType: "ImageUploader, TextUploader, FileUploader",
+      DestinationType: "ImageUploader, FileUploader",
       RequestMethod: "POST",
       RequestURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/upload`,
       Body: "MultipartFormData",
       FileFormName: "file",
-      URL: "$json:rawUrl$",
-      ThumbnailURL: "$json:imageUrl$"
+      URL: "$json:imageUrl$",
+      ThumbnailURL: "$json:rawUrl$"
     }
   
     const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' })
@@ -135,7 +136,7 @@ export default function FileUpload({
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
   
-    setToast('ShareX Config Generated', 'The ShareX configuration file has been downloaded.')
+    // setToast('ShareX Config Generated', 'The ShareX configuration file has been downloaded.')
   }
   
 
@@ -143,7 +144,7 @@ export default function FileUpload({
     if (localUploadedFileUrl) {
       const rawUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api${localUploadedFileUrl}`
       navigator.clipboard.writeText(rawUrl)
-      setToast('Raw Link Copied', 'The raw file link has been copied to your clipboard.')
+      // setToast('Raw Link Copied', 'The raw file link has been copied to your clipboard.')
     }
   }
 
