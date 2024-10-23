@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import FileUpload from '@/components/file-upload';
 import Updates from '@/components/updates';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from '@/hooks/use-toast';
-import FileUrlDisplay from '@/components/file-url-display';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -41,7 +40,6 @@ export default function UploadPage() {
               transition={{ delay: 0.3 }}
               className="mt-6"
             >
-              <FileUrlDisplay url={uploadedFileUrl} />
             </motion.div>
           )}
         </CardContent>

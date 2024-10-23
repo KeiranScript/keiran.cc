@@ -10,7 +10,7 @@ const rateLimit = {
 
 const rateLimiter = new Map()
 
-const base_url = process.env.NEXT_PUBLIC_BASE_URL || "https://keiran.cc";
+const BASE_URL = "https://keiran.cc";
 
 export async function POST(request: NextRequest) {
   const ip = request.ip ?? '127.0.0.1'
@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
 
   const data = await request.formData()
   const file: File | null = data.get('file') as unknown as File
+  const domain: string | null = data.get('domain') as string | null
 
   if (!file) {
     return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
@@ -42,9 +43,11 @@ export async function POST(request: NextRequest) {
 
   try {
     await writeFile(filePath, buffer)
-    const rawUrl = `${base_url}/api/${randomName}`
-    const imageUrl = `${base_url}/${randomName}`
-
+    
+    const base_url = domain || BASE_URL
+    const rawUrl = `https://${base_url}/api/${randomName}`
+    const imageUrl = `https://${base_url}/${randomName}`
+  
     return NextResponse.json({ rawUrl, imageUrl })
   } catch (error) {
     console.error('Error saving file:', error)

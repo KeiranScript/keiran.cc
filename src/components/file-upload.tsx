@@ -4,13 +4,26 @@ import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Upload, Loader2, File, CheckCircle, Download, Link } from 'lucide-react'
+import { Upload, Loader2, File, CheckCircle, Download, Link, Settings } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import confetti from 'canvas-confetti'
 import FileUrlDisplay from '@/components/file-url-display'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const MAX_FILE_SIZE = 1024 * 1024 * 1024 // 1GB in bytes
-const CHUNK_SIZE = 1024 * 1024 * 10 // 10MB in bytes
+
+const DOMAINS = ['keiran.cc', 'e-z.software', 'keiran.live', 'keiran.tech', 'keirandev.me']
 
 export default function FileUpload({
   setToast,
@@ -23,8 +36,10 @@ export default function FileUpload({
   const [uploading, setUploading] = useState(false)
   const [localUploadedFileUrl, setLocalUploadedFileUrl] = useState<string | null>(null)
   const [uploadSuccess, setUploadSuccess] = useState(false)
+  const [rawUrl, setRawUrl] = useState<string | null>(null)
   const [buttonLabel, setButtonLabel] = useState('Upload')
   const [uploadProgress, setUploadProgress] = useState(0)
+  const [selectedDomain, setSelectedDomain] = useState(DOMAINS[0])
 
   const handleSparkle = () => {
     confetti({
@@ -61,42 +76,23 @@ export default function FileUpload({
     setUploadProgress(0)
   
     try {
-      const totalChunks = Math.ceil(file.size / CHUNK_SIZE)
-      let uploadedChunks = 0
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('domain', selectedDomain)
   
-      for (let start = 0; start < file.size; start += CHUNK_SIZE) {
-        const chunk = file.slice(start, start + CHUNK_SIZE)
-        const formData = new FormData()
-        formData.append('file', chunk)
-        formData.append('chunkIndex', String(uploadedChunks))
-        formData.append('totalChunks', String(totalChunks))
-        formData.append('filename', file.name)
-  
-        const response = await fetch('/api/upload-chunk', {
-          method: 'POST',
-          body: formData,
-        })
-  
-        if (!response.ok) {
-          throw new Error('Chunk upload failed')
-        }
-  
-        uploadedChunks++
-        setUploadProgress((uploadedChunks / totalChunks) * 100)
-      }
-  
-      const finalizeResponse = await fetch('/api/upload-finalize', {
+      const response = await fetch('/api/upload', {
         method: 'POST',
-        body: JSON.stringify({ filename: file.name }),
-        headers: { 'Content-Type': 'application/json' },
+        body: formData,
       })
   
-      if (!finalizeResponse.ok) {
-        throw new Error('Upload finalization failed')
+      if (!response.ok) {
+        throw new Error('Upload failed')
       }
   
-      const data = await finalizeResponse.json()
-      setLocalUploadedFileUrl(data.url)
+      const data = await response.json()
+      setLocalUploadedFileUrl(data.imageUrl)
+      setRawUrl(data.rawUrl)
+      setUploadedFileUrl(data.imageUrl)
       setUploadSuccess(true)
       setButtonLabel('Uploaded')
   
@@ -112,13 +108,20 @@ export default function FileUpload({
       setFile(null)
     }
   }
+  
+  const copyRawLink = () => {
+    if (rawUrl) {
+      navigator.clipboard.writeText(rawUrl)
+      setToast('Raw Link Copied', 'The raw file link has been copied to your clipboard.')
+    }
+  }
 
   const generateShareXConfig = () => {
     const config = {
       Name: "AnonHost",
       DestinationType: "ImageUploader, TextUploader, FileUploader",
       RequestMethod: "POST",
-      RequestURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/upload`,
+      RequestURL: `https://${selectedDomain}/api/upload`,
       Body: "MultipartFormData",
       FileFormName: "file",
       URL: "$json:rawUrl$",
@@ -137,19 +140,50 @@ export default function FileUpload({
   
     setToast('ShareX Config Generated', 'The ShareX configuration file has been downloaded.')
   }
-  
-
-  const copyRawLink = () => {
-    if (localUploadedFileUrl) {
-      const rawUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api${localUploadedFileUrl}`
-      navigator.clipboard.writeText(rawUrl)
-      setToast('Raw Link Copied', 'The raw file link has been copied to your clipboard.')
-    }
-  }
 
   return (
     <Card className="w-full max-w-2xl mx-auto overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl">
       <CardContent className="p-6">
+        <div className="flex justify-end mb-4">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">Settings</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Configure your upload settings
+                  </p>
+                </div>
+                <div className="grid gap-2">
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <label htmlFor="domain">Domain</label>
+                    <Select onValueChange={setSelectedDomain} defaultValue={selectedDomain}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select a domain" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DOMAINS.map((domain) => (
+                          <SelectItem key={domain} value={domain}>
+                            {domain}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button onClick={generateShareXConfig}>
+                  <Download className="mr-2 h-4 w-4" />
+                  Generate ShareX Config
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 ${isDragActive ? 'border-primary bg-primary/5' : 'border-muted hover:border-primary/50'}`}
@@ -168,7 +202,7 @@ export default function FileUpload({
             </div>
           )}
         </div>
-        <div className="mt-6 flex justify-center space-x-4">
+        <div className="mt-6 flex justify-center">
           <Button
             onClick={handleUpload}
             disabled={!file || uploading}
@@ -191,14 +225,6 @@ export default function FileUpload({
                 {buttonLabel}
               </>
             )}
-          </Button>
-          <Button
-            onClick={generateShareXConfig}
-            variant='outline'
-            className="px-6 py-2 text-lg"
-          >
-            <Download className="mr-2 h-5 w-5" />
-            ShareX Config
           </Button>
         </div>
         {uploading && (
@@ -226,4 +252,8 @@ export default function FileUpload({
       </CardContent>
     </Card>
   )
+}
+
+function setRawUrl(rawUrl: any) {
+  throw new Error('Function not implemented.')
 }
