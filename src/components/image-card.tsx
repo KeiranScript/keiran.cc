@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from '@/hooks/use-toast';
 import { Download, Link, Info } from 'lucide-react';
 
 interface ImageData {
@@ -29,7 +29,7 @@ export const ImageCard = ({ image }: { image: ImageData }) => {
     link.click();
     document.body.removeChild(link);
     toast({
-      title: "Image Saved",
+      title: 'Image Saved',
       description: `${image.alt} has been saved to your device.`,
     });
   };
@@ -37,14 +37,17 @@ export const ImageCard = ({ image }: { image: ImageData }) => {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}${image.src}`);
     toast({
-      title: "Link Copied",
-      description: "Image link has been copied to your clipboard.",
+      title: 'Link Copied',
+      description: 'Image link has been copied to your clipboard.',
     });
   };
 
   return (
     <>
-      <Card className="shadow-lg cursor-pointer overflow-hidden" onClick={() => setIsDialogOpen(true)}>
+      <Card
+        className="shadow-lg cursor-pointer overflow-hidden"
+        onClick={() => setIsDialogOpen(true)}
+      >
         <CardContent className="p-0">
           <div className="relative aspect-square">
             <Image
@@ -60,17 +63,28 @@ export const ImageCard = ({ image }: { image: ImageData }) => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="overflow-hidden max-h-[90vh] flex flex-col justify-center items-center">
           <div className="flex flex-col space-y-4 justify-center items-center w-full">
-            <Image 
-              src={image.src} 
-              alt={image.alt} 
-              width={400} 
-              height={400} 
-              className="max-w-full h-auto object-contain mx-auto" 
+            <Image
+              src={image.src}
+              alt={image.alt}
+              width={400}
+              height={400}
+              className="max-w-full h-auto object-contain mx-auto"
             />
             <div className="flex justify-between w-full max-w-sm">
-              <Button onClick={handleSave}><Download className="mr-2 h-4 w-4" /> Save</Button>
-              <Button onClick={handleCopyLink}><Link className="mr-2 h-4 w-4" /> Copy Link</Button>
-              <Button onClick={() => toast({ title: "Metadata", description: `Size: ${image.metadata?.size}, Dimensions: ${image.metadata?.dimensions}, Type: ${image.metadata?.type}` })}>
+              <Button onClick={handleSave}>
+                <Download className="mr-2 h-4 w-4" /> Save
+              </Button>
+              <Button onClick={handleCopyLink}>
+                <Link className="mr-2 h-4 w-4" /> Copy Link
+              </Button>
+              <Button
+                onClick={() =>
+                  toast({
+                    title: 'Metadata',
+                    description: `Size: ${image.metadata?.size}, Dimensions: ${image.metadata?.dimensions}, Type: ${image.metadata?.type}`,
+                  })
+                }
+              >
                 <Info className="mr-2 h-4 w-4" /> View Metadata
               </Button>
             </div>

@@ -1,40 +1,47 @@
-import { Metadata } from 'next'
-import path from 'path'
-import fs from 'fs/promises'
-import { notFound } from 'next/navigation'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import { Prism as SyntaxHighlighter, SyntaxHighlighterProps } from 'react-syntax-highlighter'
-import code from '@/components/code-theme'
-import Image from 'next/image'
+import { Metadata } from 'next';
+import path from 'path';
+import fs from 'fs/promises';
+import { notFound } from 'next/navigation';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import {
+  Prism as SyntaxHighlighter,
+  SyntaxHighlighterProps,
+} from 'react-syntax-highlighter';
+import code from '@/components/code-theme';
+import Image from 'next/image';
 
-const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats/`
+const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats/`;
 
-export async function generateMetadata({ params }: { params: { filename: string } }): Promise<Metadata> {
-  const { filename } = params
-  const filePath = path.join(process.cwd(), 'public', 'uploads', filename)
+export async function generateMetadata({
+  params,
+}: {
+  params: { filename: string };
+}): Promise<Metadata> {
+  const { filename } = params;
+  const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
 
-  let fileStats
+  let fileStats;
   try {
-    fileStats = await fs.stat(filePath)
+    fileStats = await fs.stat(filePath);
   } catch (error) {
-    return notFound()
+    return notFound();
   }
 
-  const fileSize = formatBytes(fileStats.size)
-  const response = await fetch(STATS_API_URL)
-  const stats = await response.json()
+  const fileSize = formatBytes(fileStats.size);
+  const response = await fetch(STATS_API_URL);
+  const stats = await response.json();
 
-  const fileType = getFileType(filename)
-  let description: string
-  let numberOfLines: number | undefined
+  const fileType = getFileType(filename);
+  let description: string;
+  let numberOfLines: number | undefined;
 
   if (fileType === 'code') {
-    const fileContent = await fs.readFile(filePath, 'utf-8')
-    numberOfLines = fileContent.split('\n').length
-    const language = getLanguageFromExtension(filename)
-    description = `🌎 Language: ${language}\n✍️ Lines: ${numberOfLines}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`
+    const fileContent = await fs.readFile(filePath, 'utf-8');
+    numberOfLines = fileContent.split('\n').length;
+    const language = getLanguageFromExtension(filename);
+    description = `🌎 Language: ${language}\n✍️ Lines: ${numberOfLines}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
   } else {
-    description = `📄 File Name: ${filename}\n📂 File Size: ${fileSize}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`
+    description = `📄 File Name: ${filename}\n📂 File Size: ${fileSize}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
   }
 
   const metadata: Metadata = {
@@ -46,12 +53,14 @@ export async function generateMetadata({ params }: { params: { filename: string 
       type: fileType === 'video' ? 'video.other' : 'website',
       url: `${process.env.NEXT_PUBLIC_API_URL}/uploads/${filename}`,
       siteName: 'AnonHost',
-      images: [{
-        url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
-        width: 1200,
-        height: 630,
-        alt: `Preview of ${filename}`,
-      }],
+      images: [
+        {
+          url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
+          width: 1200,
+          height: 630,
+          alt: `Preview of ${filename}`,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
@@ -59,33 +68,36 @@ export async function generateMetadata({ params }: { params: { filename: string 
       description,
       images: [`${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`],
     },
-  }
+  };
 
-  return metadata
+  return metadata;
 }
 
-export default async function FilePage({ params }: { params: { filename: string } }) {
+type PageProps = {
+  params: { filename: string };
+};
+
+export default async function FilePage({ params }: PageProps) {
   const { filename } = params;
   const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
 
   let fileStats;
-
   try {
     fileStats = await fs.stat(filePath);
   } catch (error) {
-    return notFound();
+    notFound();
   }
 
   const imageUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`;
   const fileType = getFileType(filename);
 
-  let fileContent;
+  let fileContent = '';
   if (fileType === 'text' || fileType === 'code') {
     try {
       fileContent = await fs.readFile(filePath, 'utf-8');
     } catch (error) {
-      console.error("Error reading file:", error);
-      fileContent = "Error reading file content.";
+      console.error('Error reading file:', error);
+      fileContent = 'Error reading file content.';
     }
   }
 
@@ -94,7 +106,9 @@ export default async function FilePage({ params }: { params: { filename: string 
       <div className="max-w-4xl w-full p-6 rounded-lg shadow-lg">
         <Card className="p-6 rounded-lg shadow-lg">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">{filename}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">
+              {filename}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {fileType === 'image' ? (
@@ -102,10 +116,9 @@ export default async function FilePage({ params }: { params: { filename: string 
                 <Image
                   src={imageUrl}
                   alt={filename}
-                  draggable="false"
                   fill
-                  objectFit="cover"
-                  className="rounded-lg"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="rounded-lg object-cover"
                 />
               </div>
             ) : fileType === 'video' ? (
@@ -117,14 +130,15 @@ export default async function FilePage({ params }: { params: { filename: string 
               <SyntaxHighlighter
                 language={getLanguageFromExtension(filename)}
                 showLineNumbers={true}
-                startingLineNumber={1}
-                style={code as SyntaxHighlighterProps['style']}
-                className="text-white mb-4"
+                style={code as SyntaxHighlighter['props']['style']}
+                className="text-sm mb-4"
               >
-                {typeof fileContent === 'string' ? fileContent : ""}
+                {fileContent}
               </SyntaxHighlighter>
             ) : (
-              <p className="text-white">Preview unavailable for this file type.</p>
+              <p className="text-muted-foreground">
+                Preview unavailable for this file type.
+              </p>
             )}
           </CardContent>
         </Card>

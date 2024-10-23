@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-import { nanoid } from 'nanoid'
-import { z } from 'zod'
-import DOMPurify from 'isomorphic-dompurify'
+import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+import { nanoid } from 'nanoid';
+import { z } from 'zod';
+import DOMPurify from 'isomorphic-dompurify';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 const pasteSchema = z.object({
   title: z.string().min(1).max(100),
@@ -12,13 +12,14 @@ const pasteSchema = z.object({
   content: z.string().min(1).max(100000),
   language: z.string().max(50),
   expirationTime: z.string().optional(),
-})
+});
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     console.log('Request body:', body); // Debugging
-    const { title, description, content, language, expirationTime } = pasteSchema.parse(body);
+    const { title, description, content, language, expirationTime } =
+      pasteSchema.parse(body);
 
     const sanitizedContent = DOMPurify.sanitize(content);
 
@@ -60,8 +61,11 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error) {
       console.error('Detailed error:', error.message, error.stack);
     }
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 },
+    );
   } finally {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
 }

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from 'react';
 import FileUpload from '@/components/file-upload';
@@ -33,7 +33,10 @@ export default function UploadPage() {
           <p className="text-lg md:text-xl text-center text-muted-foreground mb-8">
             Unlimited uploads for free, forever.
           </p>
-          <FileUpload setToast={setToast} setUploadedFileUrl={setUploadedFileUrl} />
+          <FileUpload
+            setToast={setToast}
+            setUploadedFileUrl={setUploadedFileUrl}
+          />
           {uploadedFileUrl && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}

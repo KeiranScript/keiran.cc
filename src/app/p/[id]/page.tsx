@@ -1,27 +1,31 @@
-import { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { PrismaClient } from '@prisma/client'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { PrismaClient } from '@prisma/client';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import code from '@/components/code-theme';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
   if (!params?.id) {
     return {
       title: 'Paste Not Found',
-    }
+    };
   }
 
   const paste = await prisma.paste.findUnique({
     where: { id: params.id },
-  })
+  });
 
   if (!paste) {
     return {
       title: 'Paste Not Found',
-    }
+    };
   }
 
   return {
@@ -32,20 +36,24 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       description: paste.description || 'View this paste on AnonHost',
       type: 'article',
     },
-  }
+  };
 }
 
-export default async function PasteView({ params }: { params: { id: string } }) {
+export default async function PasteView({
+  params,
+}: {
+  params: { id: string };
+}) {
   if (!params?.id) {
-    notFound()
+    notFound();
   }
 
   const paste = await prisma.paste.findUnique({
     where: { id: params.id },
-  })
+  });
 
   if (!paste) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -69,5 +77,5 @@ export default async function PasteView({ params }: { params: { id: string } }) 
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 Bytes';
@@ -58,7 +58,9 @@ const StatsContent = ({ stats }: { stats: any }) => {
               <CardTitle>Used Storage</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">{formatBytes(stats.usedStorage)}</p>
+              <p className="text-3xl font-bold">
+                {formatBytes(stats.usedStorage)}
+              </p>
             </CardContent>
           </Card>
         </motion.div>
@@ -72,7 +74,9 @@ const StatsContent = ({ stats }: { stats: any }) => {
               <CardTitle>Available Storage</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">{formatBytes(stats.availableStorage)}</p>
+              <p className="text-3xl font-bold">
+                {formatBytes(stats.availableStorage)}
+              </p>
             </CardContent>
           </Card>
         </motion.div>
@@ -90,7 +94,8 @@ const StatsContent = ({ stats }: { stats: any }) => {
           <CardContent>
             <Progress value={progressValue} className="w-full" />
             <p className="mt-2 text-sm text-muted-foreground">
-              {formatBytes(stats.usedStorage)} of {formatBytes(stats.totalStorage)} used
+              {formatBytes(stats.usedStorage)} of{' '}
+              {formatBytes(stats.totalStorage)} used
             </p>
           </CardContent>
         </Card>
@@ -99,16 +104,16 @@ const StatsContent = ({ stats }: { stats: any }) => {
         .glow {
           position: relative;
           color: white;
-          text-shadow: 
-            0 0 10px rgba(255, 255, 255, 0.5), 
-            0 0 20px rgba(255, 255, 255, 0.4), 
+          text-shadow:
+            0 0 10px rgba(255, 255, 255, 0.5),
+            0 0 20px rgba(255, 255, 255, 0.4),
             0 0 30px rgba(255, 255, 255, 0.3);
           transition: text-shadow 0.3s ease;
         }
         .glow:hover {
-          text-shadow: 
-            0 0 15px rgba(255, 255, 255, 1), 
-            0 0 25px rgba(255, 255, 255, 0.8), 
+          text-shadow:
+            0 0 15px rgba(255, 255, 255, 1),
+            0 0 25px rgba(255, 255, 255, 0.8),
             0 0 35px rgba(255, 255, 255, 0.6);
         }
       `}</style>

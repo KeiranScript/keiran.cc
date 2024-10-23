@@ -1,32 +1,52 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { toast } from '@/components/ui/use-toast'
-import { Loader2, Copy, ExternalLink } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from '@/components/ui/use-toast';
+import { Loader2, Copy, ExternalLink } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const formSchema = z.object({
-  title: z.string().min(1, "Title is required").max(100, "Title must be 100 characters or less"),
-  description: z.string().max(500, "Description must be 500 characters or less").optional(),
-  content: z.string().min(1, "Content is required").max(100000, "Content must be 100,000 characters or less"),
-  language: z.string().min(1, "Language is required"),
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(100, 'Title must be 100 characters or less'),
+  description: z
+    .string()
+    .max(500, 'Description must be 500 characters or less')
+    .optional(),
+  content: z
+    .string()
+    .min(1, 'Content is required')
+    .max(100000, 'Content must be 100,000 characters or less'),
+  language: z.string().min(1, 'Language is required'),
   expirationTime: z.string().optional(),
-})
+});
 
-type FormData = z.infer<typeof formSchema>
+type FormData = z.infer<typeof formSchema>;
 
 const languageOptions = [
   { value: 'plaintext', label: 'Plain Text' },
@@ -83,43 +103,49 @@ const languageOptions = [
   { value: 'vim', label: 'Vim' },
   { value: 'yaml', label: 'YAML' },
   { value: 'zig', label: 'Zig' },
-]
+];
 
 export default function PastePage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [pasteUrl, setPasteUrl] = useState<string | null>(null)
-  const { control, register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
+  const [isLoading, setIsLoading] = useState(false);
+  const [pasteUrl, setPasteUrl] = useState<string | null>(null);
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      language: 'plaintext'
-    }
-  })
+      language: 'plaintext',
+    },
+  });
 
-  const content = watch('content')
-  const language = watch('language')
+  const content = watch('content');
+  const language = watch('language');
 
   const onSubmit = async (data: FormData) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const response = await fetch('/api/pastes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to create paste')
+        throw new Error('Failed to create paste');
       }
 
-      const result = await response.json()
-      setPasteUrl(result.url)
-      toast("Paste created successfully!")
+      const result = await response.json();
+      setPasteUrl(result.url);
+      toast('Paste created successfully!');
     } catch (error) {
-      toast("Error! An unexpected error occurred")
+      toast('Error! An unexpected error occurred');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -130,7 +156,9 @@ export default function PastePage() {
       >
         <Card className="w-full max-w-4xl mx-auto">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">Create a New Paste</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">
+              Create a New Paste
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -141,7 +169,11 @@ export default function PastePage() {
                   {...register('title')}
                   placeholder="Enter a title for your paste"
                 />
-                {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
+                {errors.title && (
+                  <p className="text-sm text-destructive mt-1">
+                    {errors.title.message}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="description">Description (Optional)</Label>
@@ -151,7 +183,11 @@ export default function PastePage() {
                   placeholder="Enter an optional description"
                   rows={3}
                 />
-                {errors.description && <p className="text-sm text-destructive mt-1">{errors.description.message}</p>}
+                {errors.description && (
+                  <p className="text-sm text-destructive mt-1">
+                    {errors.description.message}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="language">Language</Label>
@@ -159,7 +195,10 @@ export default function PastePage() {
                   name="language"
                   control={control}
                   render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a language" />
                       </SelectTrigger>
@@ -173,16 +212,24 @@ export default function PastePage() {
                     </Select>
                   )}
                 />
-                {errors.language && <p className="text-sm text-destructive mt-1">{errors.language.message}</p>}
+                {errors.language && (
+                  <p className="text-sm text-destructive mt-1">
+                    {errors.language.message}
+                  </p>
+                )}
               </div>
               <div>
-                <Label htmlFor="expirationTime">Expiration Time (Optional)</Label>
+                <Label htmlFor="expirationTime">
+                  Expiration Time (Optional)
+                </Label>
                 <Input
                   id="expirationTime"
                   type="datetime-local"
                   {...register('expirationTime')}
                 />
-                <p className="text-sm text-muted-foreground mt-1">Default: 7 days, Max: 30 days</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Default: 7 days, Max: 30 days
+                </p>
               </div>
               <Tabs defaultValue="editor">
                 <TabsList className="grid w-full grid-cols-2">
@@ -196,7 +243,11 @@ export default function PastePage() {
                     rows={15}
                     className="font-mono"
                   />
-                  {errors.content && <p className="text-sm text-destructive mt-1">{errors.content.message}</p>}
+                  {errors.content && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.content.message}
+                    </p>
+                  )}
                 </TabsContent>
                 <TabsContent value="preview">
                   <SyntaxHighlighter
@@ -237,15 +288,14 @@ export default function PastePage() {
                   />
                   <TooltipProvider>
                     <Tooltip>
-
                       <TooltipTrigger asChild>
                         <Button
                           type="button"
                           variant="outline"
                           className="ml-2"
                           onClick={() => {
-                            navigator.clipboard.writeText(pasteUrl)
-                            toast.success("Copied to clipboard!")
+                            navigator.clipboard.writeText(pasteUrl);
+                            toast.success('Copied to clipboard!');
                           }}
                         >
                           <Copy className="h-4 w-4" />
@@ -280,5 +330,5 @@ export default function PastePage() {
         </Card>
       </motion.div>
     </div>
-  )
+  );
 }
