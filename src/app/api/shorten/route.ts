@@ -36,7 +36,17 @@ const shortenSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    let body;
+    const contentType = request.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      body = await request.json();
+    } else {
+      const formData = await request.formData();
+      body = Object.fromEntries(formData);
+    }
+
+    console.log('Received body:', body);
+
     const { url, customAlias, expirationTime, domain } =
       shortenSchema.parse(body);
 
