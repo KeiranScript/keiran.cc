@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 import DOMPurify from 'isomorphic-dompurify';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 const prisma = new PrismaClient();
 
@@ -56,7 +57,17 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating paste:', error);
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
+      const errorMessages = error.errors
+        .map((err) => `${err.path.join('.')}: ${err.message}`)
+        .join(', ');
+      return NextResponse.json({ error: errorMessages }, { status: 400 });
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      console.error('Prisma error:', error.message);
+      return NextResponse.json(
+        { error: 'Database error occurred' },
+        { status: 500 },
+      );
     }
     if (error instanceof Error) {
       console.error('Detailed error:', error.message, error.stack);

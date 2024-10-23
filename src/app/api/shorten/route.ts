@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import { PrismaClient } from '@prisma/client';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { z } from 'zod';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 const prisma = new PrismaClient();
 
@@ -83,6 +84,13 @@ export async function POST(request: NextRequest) {
         .map((err) => `${err.path.join('.')}: ${err.message}`)
         .join(', ');
       return NextResponse.json({ error: errorMessages }, { status: 400 });
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      console.error('Prisma error:', error.message);
+      return NextResponse.json(
+        { error: 'Database error occurred' },
+        { status: 500 },
+      );
     }
     if (error instanceof Error) {
       console.error('Detailed error:', error.message, error.stack);

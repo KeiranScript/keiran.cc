@@ -167,9 +167,11 @@ export default function PastePage() {
         description: '$input:Description$',
         language: '$input:Language$',
         content: '$input:Content$',
+        expirationTime: '$input:ExpirationTime$',
       },
       URL: '$json:url$',
     };
+
 
     const blob = new Blob([JSON.stringify(config, null, 2)], {
       type: 'application/json',
