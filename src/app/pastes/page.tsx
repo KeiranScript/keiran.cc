@@ -21,13 +21,18 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/components/ui/use-toast';
-import { Loader2, Copy, ExternalLink } from 'lucide-react';
+import { Loader2, Copy, ExternalLink, Settings, Download } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const formSchema = z.object({
   title: z
@@ -105,9 +110,12 @@ const languageOptions = [
   { value: 'zig', label: 'Zig' },
 ];
 
+const DOMAINS = ['keiran.cc', 'e-z.software', 'keiran.live', 'keiran.tech'];
+
 export default function PastePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [pasteUrl, setPasteUrl] = useState<string | null>(null);
+  const [selectedDomain, setSelectedDomain] = useState(DOMAINS[0]);
   const {
     control,
     register,
@@ -130,7 +138,7 @@ export default function PastePage() {
       const response = await fetch('/api/pastes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, domain: selectedDomain }),
       });
 
       if (!response.ok) {
@@ -147,6 +155,33 @@ export default function PastePage() {
     }
   };
 
+  const generateShareXConfig = () => {
+    const config = {
+      Name: "AnonHost Paste",
+      DestinationType: "TextUploader",
+      RequestMethod: "POST",
+      RequestURL: `https://${selectedDomain}/api/pastes`,
+      Body: "MultipartFormData",
+      Arguments: {
+        title: "$input:Title$",
+        description: "$input:Description$",
+        language: "$input:Language$",
+        content: "$input:Content$",
+      },
+      URL: "$json:url$"
+    };
+
+    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'AnonHost-Paste.sxcu';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <motion.div
@@ -155,10 +190,48 @@ export default function PastePage() {
         transition={{ duration: 0.5 }}
       >
         <Card className="w-full max-w-4xl mx-auto">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">
+          <CardHeader className="flex justify-between items-center">
+            <CardTitle className="text-2xl font-bold">
               Create a New Paste
             </CardTitle>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium leading-none">Settings</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Configure your paste settings
+                    </p>
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="domain">Domain</Label>
+                      <Select onValueChange={setSelectedDomain} defaultValue={selectedDomain}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select a domain" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DOMAINS.map((domain) => (
+                            <SelectItem key={domain} value={domain}>
+                              {domain}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <Button onClick={generateShareXConfig}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Generate ShareX Config
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

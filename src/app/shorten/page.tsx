@@ -10,13 +10,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
-import { Link, Loader2, Copy } from 'lucide-react';
+import { Link, Loader2, Copy, Settings, Download } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const formSchema = z.object({
   url: z.string().url({ message: 'Please enter a valid URL' }),
@@ -43,9 +55,12 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+const DOMAINS = ['keiran.cc', 'e-z.software', 'keiran.live', 'keiran.tech'];
+
 export default function ShortenPage() {
   const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedDomain, setSelectedDomain] = useState(DOMAINS[0]);
   const {
     register,
     handleSubmit,
@@ -60,7 +75,7 @@ export default function ShortenPage() {
       const response = await fetch('/api/shorten', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, domain: selectedDomain }),
       });
 
       const result = await response.json();
@@ -78,6 +93,28 @@ export default function ShortenPage() {
     }
   };
 
+  const generateShareXConfig = () => {
+    const config = {
+      Name: "AnonHost URL Shortener",
+      DestinationType: "URLShortener",
+      RequestMethod: "POST",
+      RequestURL: `https://${selectedDomain}/api/shorten`,
+      Body: "JSON",
+      Data: "{\"url\":\"$input$\"}",
+      URL: "$json:shortUrl$"
+    };
+
+    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'AnonHost-URLShortener.sxcu';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <motion.div
@@ -86,10 +123,48 @@ export default function ShortenPage() {
         transition={{ duration: 0.5 }}
       >
         <Card className="w-full max-w-md mx-auto">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">
+          <CardHeader className="flex justify-between items-center">
+            <CardTitle className="text-2xl font-bold">
               Shorten Your URL
             </CardTitle>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium leading-none">Settings</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Configure your URL shortener settings
+                    </p>
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="domain">Domain</Label>
+                      <Select onValueChange={setSelectedDomain} defaultValue={selectedDomain}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select a domain" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DOMAINS.map((domain) => (
+                            <SelectItem key={domain} value={domain}>
+                              {domain}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <Button onClick={generateShareXConfig}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Generate ShareX Config
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
