@@ -10,7 +10,7 @@ const rateLimit = {
 
 const rateLimiter = new Map();
 
-const BASE_URL = "https://keiran.cc";
+const BASE_URL = "keiran.cc";
 
 export async function POST(request: NextRequest) {
   const ip = request.ip ?? '127.0.0.1';

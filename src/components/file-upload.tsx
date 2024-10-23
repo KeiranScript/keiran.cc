@@ -123,7 +123,7 @@ export default function FileUpload({
       Name: "AnonHost",
       DestinationType: "ImageUploader, TextUploader, FileUploader",
       RequestMethod: "POST",
-      RequestURL: `${selectedDomain}/api/upload`,
+      RequestURL: `https://${selectedDomain}/api/upload`,
       Body: "MultipartFormData",
       FileFormName: "file",
       URL: "$json:rawUrl$",
