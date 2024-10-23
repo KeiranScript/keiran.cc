@@ -23,13 +23,14 @@ const shortenSchema = z.object({
     .string()
     .refine(
       (val) => {
-        if (!val) return true; // Allow empty string
+        if (!val) return true;
         const date = new Date(val);
         return !isNaN(date.getTime());
       },
       { message: 'Invalid datetime format' },
     )
     .optional(),
+  domain: z.string().min(1),
 });
 
 export async function POST(request: NextRequest) {

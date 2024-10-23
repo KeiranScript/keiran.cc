@@ -12,6 +12,7 @@ const pasteSchema = z.object({
   content: z.string().min(1).max(100000),
   language: z.string().max(50),
   expirationTime: z.string().optional(),
+  domain: z.string().min(1),
 });
 
 export async function POST(request: NextRequest) {
