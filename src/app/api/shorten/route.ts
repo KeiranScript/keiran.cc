@@ -35,7 +35,8 @@ const shortenSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url, customAlias, expirationTime } = shortenSchema.parse(body);
+    const { url, customAlias, expirationTime, domain } =
+      shortenSchema.parse(body);
 
     const shortCode = customAlias || nanoid(6);
     const maxExpirationTime = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({
-      shortUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/s/${shortUrl.shortCode}`,
+      shortUrl: `https://${domain}/s/${shortUrl.shortCode}`,
     });
   } catch (error) {
     console.error('Error shortening URL:', error);

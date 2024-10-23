@@ -42,8 +42,7 @@ export default function UploadPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="mt-6"
-            >
-            </motion.div>
+            ></motion.div>
           )}
         </CardContent>
       </Card>

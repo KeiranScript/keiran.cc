@@ -1,29 +1,43 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react'
-import { useDropzone } from 'react-dropzone'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Upload, Loader2, File, CheckCircle, Download, Link, Settings } from 'lucide-react'
-import { Progress } from '@/components/ui/progress'
-import confetti from 'canvas-confetti'
-import FileUrlDisplay from '@/components/file-url-display'
+import { useState, useCallback, useEffect } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Upload,
+  Loader2,
+  File,
+  CheckCircle,
+  Download,
+  Link,
+  Settings,
+} from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import confetti from 'canvas-confetti';
+import FileUrlDisplay from '@/components/file-url-display';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select';
 
-const MAX_FILE_SIZE = 1024 * 1024 * 1024 // 1GB in bytes
+const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB in bytes
 
-const DOMAINS = ['keiran.cc', 'e-z.software', 'keiran.live', 'keiran.tech', 'keirandev.me']
+const DOMAINS = [
+  'keiran.cc',
+  'e-z.software',
+  'keiran.live',
+  'keiran.tech',
+  'keirandev.me',
+];
 
 export default function FileUpload({
   setToast,
@@ -32,14 +46,16 @@ export default function FileUpload({
   setToast: (message: string, description: string) => void;
   setUploadedFileUrl: (url: string | null) => void;
 }) {
-  const [file, setFile] = useState<File | null>(null)
-  const [uploading, setUploading] = useState(false)
-  const [localUploadedFileUrl, setLocalUploadedFileUrl] = useState<string | null>(null)
-  const [uploadSuccess, setUploadSuccess] = useState(false)
-  const [rawUrl, setRawUrl] = useState<string | null>(null)
-  const [buttonLabel, setButtonLabel] = useState('Upload')
-  const [uploadProgress, setUploadProgress] = useState(0)
-  const [selectedDomain, setSelectedDomain] = useState(DOMAINS[0])
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [localUploadedFileUrl, setLocalUploadedFileUrl] = useState<
+    string | null
+  >(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [rawUrl, setRawUrl] = useState<string | null>(null);
+  const [buttonLabel, setButtonLabel] = useState('Upload');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [selectedDomain, setSelectedDomain] = useState(DOMAINS[0]);
 
   const handleSparkle = () => {
     confetti({
@@ -76,26 +92,26 @@ export default function FileUpload({
     setUploadProgress(0);
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('domain', selectedDomain)
-  
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('domain', selectedDomain);
+
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
-      })
-  
+      });
+
       if (!response.ok) {
-        throw new Error('Upload failed')
+        throw new Error('Upload failed');
       }
-  
-      const data = await response.json()
-      setLocalUploadedFileUrl(data.imageUrl)
-      setRawUrl(data.rawUrl)
-      setUploadedFileUrl(data.imageUrl)
-      setUploadSuccess(true)
-      setButtonLabel('Uploaded')
-  
+
+      const data = await response.json();
+      setLocalUploadedFileUrl(data.imageUrl);
+      setRawUrl(data.rawUrl);
+      setUploadedFileUrl(data.imageUrl);
+      setUploadSuccess(true);
+      setButtonLabel('Uploaded');
+
       setTimeout(() => {
         setButtonLabel('Upload');
         setUploadSuccess(false);
@@ -109,39 +125,47 @@ export default function FileUpload({
       setUploading(false);
       setFile(null);
     }
-  }
-  
+  };
+
   const copyRawLink = () => {
     if (rawUrl) {
-      navigator.clipboard.writeText(rawUrl)
-      setToast('Raw Link Copied', 'The raw file link has been copied to your clipboard.')
+      navigator.clipboard.writeText(rawUrl);
+      setToast(
+        'Raw Link Copied',
+        'The raw file link has been copied to your clipboard.',
+      );
     }
-  }
+  };
 
   const generateShareXConfig = () => {
     const config = {
-      Name: "AnonHost",
-      DestinationType: "ImageUploader, TextUploader, FileUploader",
-      RequestMethod: "POST",
+      Name: 'AnonHost',
+      DestinationType: 'ImageUploader, TextUploader, FileUploader',
+      RequestMethod: 'POST',
       RequestURL: `https://${selectedDomain}/api/upload`,
-      Body: "MultipartFormData",
-      FileFormName: "file",
-      URL: "$json:rawUrl$",
-      ThumbnailURL: "$json:imageUrl$"
-    }
-  
-    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'AnonHost.sxcu'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  
-    setToast('ShareX Config Generated', 'The ShareX configuration file has been downloaded.')
-  }
+      Body: 'MultipartFormData',
+      FileFormName: 'file',
+      URL: '$json:rawUrl$',
+      ThumbnailURL: '$json:imageUrl$',
+    };
+
+    const blob = new Blob([JSON.stringify(config, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'AnonHost.sxcu';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    setToast(
+      'ShareX Config Generated',
+      'The ShareX configuration file has been downloaded.',
+    );
+  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl">
@@ -164,7 +188,10 @@ export default function FileUpload({
                 <div className="grid gap-2">
                   <div className="grid grid-cols-3 items-center gap-4">
                     <label htmlFor="domain">Domain</label>
-                    <Select onValueChange={setSelectedDomain} defaultValue={selectedDomain}>
+                    <Select
+                      onValueChange={setSelectedDomain}
+                      defaultValue={selectedDomain}
+                    >
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select a domain" />
                       </SelectTrigger>
@@ -265,5 +292,5 @@ export default function FileUpload({
 }
 
 function setRawUrl(rawUrl: any) {
-  throw new Error('Function not implemented.')
+  throw new Error('Function not implemented.');
 }

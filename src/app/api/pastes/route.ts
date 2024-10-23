@@ -17,8 +17,7 @@ const pasteSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log('Request body:', body); // Debugging
-    const { title, description, content, language, expirationTime } =
+    const { title, description, content, language, expirationTime, domain } =
       pasteSchema.parse(body);
 
     const sanitizedContent = DOMPurify.sanitize(content);
@@ -50,7 +49,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const pasteUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/p/${paste.id}`;
+    const pasteUrl = `https://${domain}/p/${paste.id}`;
 
     return NextResponse.json({ url: pasteUrl });
   } catch (error) {

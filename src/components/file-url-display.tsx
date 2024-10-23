@@ -12,7 +12,7 @@ interface FileUrlDisplayProps {
 export default function FileUrlDisplay({ url }: FileUrlDisplayProps) {
   const { toast } = useToast();
 
-  const fullUrl = `${url}`
+  const fullUrl = `${url}`;
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(fullUrl);

@@ -21,7 +21,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -95,16 +95,18 @@ export default function ShortenPage() {
 
   const generateShareXConfig = () => {
     const config = {
-      Name: "AnonHost URL Shortener",
-      DestinationType: "URLShortener",
-      RequestMethod: "POST",
+      Name: 'AnonHost URL Shortener',
+      DestinationType: 'URLShortener',
+      RequestMethod: 'POST',
       RequestURL: `https://${selectedDomain}/api/shorten`,
-      Body: "JSON",
-      Data: "{\"url\":\"$input$\"}",
-      URL: "$json:shortUrl$"
+      Body: 'JSON',
+      Data: '{"url":"$input$"}',
+      URL: '$json:shortUrl$',
     };
 
-    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(config, null, 2)], {
+      type: 'application/json',
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -144,7 +146,10 @@ export default function ShortenPage() {
                   <div className="grid gap-2">
                     <div className="grid grid-cols-3 items-center gap-4">
                       <Label htmlFor="domain">Domain</Label>
-                      <Select onValueChange={setSelectedDomain} defaultValue={selectedDomain}>
+                      <Select
+                        onValueChange={setSelectedDomain}
+                        defaultValue={selectedDomain}
+                      >
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select a domain" />
                         </SelectTrigger>

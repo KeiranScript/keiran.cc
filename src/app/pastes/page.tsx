@@ -32,7 +32,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 
 const formSchema = z.object({
   title: z
@@ -157,21 +157,23 @@ export default function PastePage() {
 
   const generateShareXConfig = () => {
     const config = {
-      Name: "AnonHost Paste",
-      DestinationType: "TextUploader",
-      RequestMethod: "POST",
+      Name: 'AnonHost Paste',
+      DestinationType: 'TextUploader',
+      RequestMethod: 'POST',
       RequestURL: `https://${selectedDomain}/api/pastes`,
-      Body: "MultipartFormData",
+      Body: 'MultipartFormData',
       Arguments: {
-        title: "$input:Title$",
-        description: "$input:Description$",
-        language: "$input:Language$",
-        content: "$input:Content$",
+        title: '$input:Title$',
+        description: '$input:Description$',
+        language: '$input:Language$',
+        content: '$input:Content$',
       },
-      URL: "$json:url$"
+      URL: '$json:url$',
     };
 
-    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(config, null, 2)], {
+      type: 'application/json',
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -211,7 +213,10 @@ export default function PastePage() {
                   <div className="grid gap-2">
                     <div className="grid grid-cols-3 items-center gap-4">
                       <Label htmlFor="domain">Domain</Label>
-                      <Select onValueChange={setSelectedDomain} defaultValue={selectedDomain}>
+                      <Select
+                        onValueChange={setSelectedDomain}
+                        defaultValue={selectedDomain}
+                      >
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select a domain" />
                         </SelectTrigger>
