@@ -2,37 +2,25 @@ import { Metadata } from 'next';
 import path from 'path';
 import fs from 'fs/promises';
 import { notFound } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from 'next/image';
-import { Prism as SyntaxHighlighter, SyntaxHighlighterProps } from 'react-syntax-highlighter';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import {
+  Prism as SyntaxHighlighter,
+  SyntaxHighlighterProps,
+} from 'react-syntax-highlighter';
 import code from '@/components/code-theme';
+import Image from 'next/image';
 
-const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats`;
+const STATS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stats/`;
 
-interface OpenGraphVideo {
-  url: string;
-  width?: number;
-  height?: number;
-}
-
-interface CustomOpenGraph extends Metadata {
-  openGraph: {
-    type: string;
-    siteName: string;
-    title: string;
-    description: string;
-    url: string;
-    images: { url: string }[];
-    video?: OpenGraphVideo;
-  };
-}
-
-export async function generateMetadata({ params }: { params: { filename: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { filename: string };
+}): Promise<Metadata> {
   const { filename } = params;
   const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
 
   let fileStats;
-
   try {
     fileStats = await fs.stat(filePath);
   } catch (error) {
@@ -43,87 +31,84 @@ export async function generateMetadata({ params }: { params: { filename: string 
   const response = await fetch(STATS_API_URL);
   const stats = await response.json();
 
-  let description;
   const fileType = getFileType(filename);
+  let description: string;
+  let numberOfLines: number | undefined;
 
   if (fileType === 'code') {
     const fileContent = await fs.readFile(filePath, 'utf-8');
-    const numberOfLines = fileContent.split('\n').length;
+    numberOfLines = fileContent.split('\n').length;
     const language = getLanguageFromExtension(filename);
     description = `🌎 Language: ${language}\n✍️ Lines: ${numberOfLines}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
   } else {
     description = `📄 File Name: ${filename}\n📂 File Size: ${fileSize}\n📈 Total Uploads: ${stats.totalFiles}\n📊 Storage Used: ${(stats.usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB`;
   }
 
-  const openGraphData = {
-    type: 'website',
-    siteName: 'AnonHost',
+  const metadata: Metadata = {
     title: `${filename} - AnonHost`,
-    description: description,
-    url: `${process.env.NEXT_PUBLIC_API_URL}/uploads/${filename}`,
-    images: [{
-      url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
-    }],
+    description,
+    openGraph: {
+      title: `${filename} - AnonHost`,
+      description,
+      type: fileType === 'video' ? 'video.other' : 'website',
+      url: `${process.env.NEXT_PUBLIC_API_URL}/uploads/${filename}`,
+      siteName: 'AnonHost',
+      images: [
+        {
+          url: `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
+          width: 1200,
+          height: 630,
+          alt: `Preview of ${filename}`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${filename} - AnonHost`,
+      description,
+      images: [`${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`],
+    },
   };
 
-  // Twitter Player metadata for video
-  const twitterPlayerData: Record<string, string> = {
-    'twitter:card': 'player',
-    'twitter:title': `${filename} - AnonHost`,
-    'twitter:description': description,
-    'twitter:player': `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
-    'twitter:player:width': '1280',
-    'twitter:player:height': '720',
-    'twitter:player:stream': `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
-    'twitter:image': `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`,
-  };
-
-  if (fileType === 'video') {
-    openGraphData.type = 'video.other';
-  }
-
-  return {
-    openGraph: openGraphData,
-    twitter: twitterPlayerData,
-  };
+  return metadata;
 }
 
-export default async function FilePage({ params }: { params: { filename: string } }) {
+type PageProps = {
+  params: { filename: string };
+};
+
+export default async function FilePage({ params }: PageProps) {
   const { filename } = params;
   const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
 
   let fileStats;
-
   try {
     fileStats = await fs.stat(filePath);
   } catch (error) {
-    return notFound();
+    notFound();
   }
-
-  const fileSize = formatBytes(fileStats.size);
-
-  const response = await fetch(STATS_API_URL);
-  const stats = await response.json();
 
   const imageUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/${filename}`;
   const fileType = getFileType(filename);
 
-  let fileContent;
+  let fileContent = '';
   if (fileType === 'text' || fileType === 'code') {
     try {
       fileContent = await fs.readFile(filePath, 'utf-8');
     } catch (error) {
-      console.error("Error reading file:", error);
-      fileContent = "Error reading file content.";
+      console.error('Error reading file:', error);
+      fileContent = 'Error reading file content.';
     }
   }
 
   return (
     <main className="flex justify-center items-center min-h-screen">
-      <div className="max-w-4xl w-full p-6 bg-gray-900 rounded-lg shadow-lg">
+      <div className="max-w-4xl w-full p-6 rounded-lg shadow-lg">
         <Card className="p-6 rounded-lg shadow-lg">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">{filename}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">
+              {filename}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {fileType === 'image' ? (
@@ -131,10 +116,9 @@ export default async function FilePage({ params }: { params: { filename: string 
                 <Image
                   src={imageUrl}
                   alt={filename}
-                  draggable="false"
                   fill
-                  objectFit="cover"
-                  className="rounded-lg"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="rounded-lg object-cover"
                 />
               </div>
             ) : fileType === 'video' ? (
@@ -146,14 +130,15 @@ export default async function FilePage({ params }: { params: { filename: string 
               <SyntaxHighlighter
                 language={getLanguageFromExtension(filename)}
                 showLineNumbers={true}
-                startingLineNumber={1}
-                style={code as SyntaxHighlighterProps['style']}
-                className="text-white mb-4"
+                style={code as SyntaxHighlighter['props']['style']}
+                className="text-sm mb-4"
               >
-                {typeof fileContent === 'string' ? fileContent : ""}
+                {fileContent}
               </SyntaxHighlighter>
             ) : (
-              <p className="text-white">Preview unavailable for this file type.</p>
+              <p className="text-muted-foreground">
+                Preview unavailable for this file type.
+              </p>
             )}
           </CardContent>
         </Card>

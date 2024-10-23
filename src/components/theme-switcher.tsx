@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { useTheme } from 'next-themes'
-import { Moon, Sun } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
+import { Moon, Sun } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ThemeSwitcher() {
-  const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
-    return null
+    return null;
   }
 
   return (
@@ -41,5 +41,5 @@ export default function ThemeSwitcher() {
         </motion.div>
       </AnimatePresence>
     </Button>
-  )
+  );
 }

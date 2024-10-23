@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
@@ -45,36 +45,36 @@ export default function FileUpload({
     confetti({
       particleCount: 100,
       spread: 70,
-      origin: { y: 0.8 }
+      origin: { y: 0.8 },
     });
   };
 
   useEffect(() => {
     if (uploadSuccess) {
-      handleSparkle()
+      handleSparkle();
     }
-  }, [uploadSuccess])
+  }, [uploadSuccess]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const selectedFile = acceptedFiles[0]
+    const selectedFile = acceptedFiles[0];
     if (selectedFile.size > MAX_FILE_SIZE) {
-      setToast('File too large', 'Maximum file size is 1GB.')
+      // setToast('File too large', 'Maximum file size is 1GB.')
     } else {
-      setFile(selectedFile)
+      setFile(selectedFile);
     }
-  }, [setToast])
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
-  })
+  });
 
   const handleUpload = async () => {
-    if (!file) return
-  
-    setUploading(true)
-    setUploadProgress(0)
-  
+    if (!file) return;
+
+    setUploading(true);
+    setUploadProgress(0);
+
     try {
       const formData = new FormData()
       formData.append('file', file)
@@ -97,15 +97,17 @@ export default function FileUpload({
       setButtonLabel('Uploaded')
   
       setTimeout(() => {
-        setButtonLabel('Upload')
-        setUploadSuccess(false)
-      }, 1000)
-  
+        setButtonLabel('Upload');
+        setUploadSuccess(false);
+      }, 1000);
     } catch (error) {
-      setToast('Upload failed', 'There was an error uploading your file. Please try again.')
+      setToast(
+        'Upload failed',
+        'There was an error uploading your file. Please try again.',
+      );
     } finally {
-      setUploading(false)
-      setFile(null)
+      setUploading(false);
+      setFile(null);
     }
   }
   
@@ -192,13 +194,19 @@ export default function FileUpload({
           {file ? (
             <div className="flex items-center justify-center space-x-4">
               <File className="h-8 w-8 text-primary" />
-              <span className="text-lg font-medium text-foreground">{file.name}</span>
+              <span className="text-lg font-medium text-foreground">
+                {file.name}
+              </span>
             </div>
           ) : (
             <div>
               <Upload className="h-12 w-12 text-primary mx-auto mb-4" />
-              <p className="text-lg mb-2 font-semibold text-foreground">Drag & drop a file here, or click to select a file</p>
-              <p className="text-sm text-muted-foreground">Max file size: 1GB</p>
+              <p className="text-lg mb-2 font-semibold text-foreground">
+                Drag & drop a file here, or click to select a file
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Max file size: 1GB
+              </p>
             </div>
           )}
         </div>
@@ -206,7 +214,7 @@ export default function FileUpload({
           <Button
             onClick={handleUpload}
             disabled={!file || uploading}
-            variant='ghost'
+            variant="ghost"
             className="px-6 py-2 text-lg bg-primary text-primary-foreground"
           >
             {uploading ? (
@@ -215,7 +223,7 @@ export default function FileUpload({
                 Uploading...
               </>
             ) : uploadSuccess ? (
-              <div className='flex items-center justify-center space-x-4 text-green-500'>
+              <div className="flex items-center justify-center space-x-4 text-green-500">
                 <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
                 {buttonLabel}
               </div>
@@ -230,7 +238,9 @@ export default function FileUpload({
         {uploading && (
           <div className="mt-4">
             <Progress value={uploadProgress} className="w-full" />
-            <p className="text-sm text-center mt-2 text-muted-foreground">{Math.round(uploadProgress)}% uploaded</p>
+            <p className="text-sm text-center mt-2 text-muted-foreground">
+              {Math.round(uploadProgress)}% uploaded
+            </p>
           </div>
         )}
         {localUploadedFileUrl && (
@@ -239,8 +249,8 @@ export default function FileUpload({
             <div className="mt-2 flex justify-end">
               <Button
                 onClick={copyRawLink}
-                variant='outline'
-                size='sm'
+                variant="outline"
+                size="sm"
                 className="text-sm"
               >
                 <Link className="mr-2 h-4 w-4" />
@@ -251,7 +261,7 @@ export default function FileUpload({
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
 
 function setRawUrl(rawUrl: any) {

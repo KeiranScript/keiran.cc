@@ -1,19 +1,24 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { Upload, Link as LinkIcon, BarChart2, Menu, Cat, Code, Github, Music } from 'lucide-react'
-import ThemeSwitcher from '@/components/theme-switcher'
+import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet"
+  Upload,
+  Link as LinkIcon,
+  BarChart2,
+  Menu,
+  Cat,
+  Code,
+  Github,
+  Music,
+} from 'lucide-react';
+import ThemeSwitcher from '@/components/theme-switcher';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-const branding = process.env.NEXT_PUBLIC_BRANDING || 'keiran.cc'
+const branding = process.env.NEXT_PUBLIC_BRANDING || 'keiran.cc';
 
 const navItems = [
   { href: '/upload', icon: Upload, label: 'Upload' },
@@ -21,22 +26,44 @@ const navItems = [
   { href: '/pastes', icon: Code, label: 'Pastes' },
   { href: '/stats', icon: BarChart2, label: 'Stats' },
   { href: '/gallery', icon: Cat, label: 'Gallery' },
-  { href: 'https://github.com/KeiranScript/keiran.cc', icon: Github, label: 'Source' },
-]
+  {
+    href: 'https://github.com/KeiranScript/keiran.cc',
+    icon: Github,
+    label: 'Source',
+  },
+];
+
+const tracks = ['/tracks/linqfy.mp3', '/tracks/iwtm.ogx'];
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const pathname = usePathname();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20)
-    }
+      setScrolled(window.scrollY > 20);
+    };
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const playRandomTrack = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
+        audioRef.current.src = randomTrack;
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
+    }
+  };
 
   const NavItems = () => (
     <>
@@ -47,7 +74,7 @@ export default function Navbar() {
           whileTap={{ scale: 0.95 }}
         >
           <Button
-            variant={pathname === item.href ? "default" : "ghost"}
+            variant={pathname === item.href ? 'default' : 'ghost'}
             asChild
             onClick={() => setIsOpen(false)}
           >
@@ -59,7 +86,7 @@ export default function Navbar() {
         </motion.div>
       ))}
     </>
-  )
+  );
 
   return (
     <motion.nav
@@ -71,14 +98,39 @@ export default function Navbar() {
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       <div className="container flex h-16 items-center justify-between px-4">
-        <Link href="/" className="font-bold text-2xl hover:text-primary transition-colors">
+        <Link
+          href="/"
+          className="font-bold text-2xl hover:text-primary transition-colors"
+        >
           {branding}
         </Link>
         <div className="hidden md:flex items-center space-x-4">
           <NavItems />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={playRandomTrack}
+            className={`transition-colors ${isPlaying ? 'text-primary' : ''}`}
+          >
+            <Music className="h-5 w-5" />
+            <span className="sr-only">
+              {isPlaying ? 'Pause' : 'Play'} random track
+            </span>
+          </Button>
           <ThemeSwitcher />
         </div>
         <div className="md:hidden flex items-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={playRandomTrack}
+            className={`transition-colors ${isPlaying ? 'text-primary' : ''}`}
+          >
+            <Music className="h-6 w-6" />
+            <span className="sr-only">
+              {isPlaying ? 'Pause' : 'Play'} random track
+            </span>
+          </Button>
           <ThemeSwitcher />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
@@ -95,6 +147,7 @@ export default function Navbar() {
           </Sheet>
         </div>
       </div>
+      <audio ref={audioRef} />
     </motion.nav>
-  )
+  );
 }

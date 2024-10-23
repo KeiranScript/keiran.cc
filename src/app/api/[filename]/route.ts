@@ -1,34 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createReadStream } from 'fs'
-import { stat } from 'fs/promises'
-import path from 'path'
+import { NextRequest, NextResponse } from 'next/server';
+import { createReadStream } from 'fs';
+import { stat } from 'fs/promises';
+import path from 'path';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { filename: string } }
+  { params }: { params: { filename: string } },
 ) {
-  const filename = params.filename
-  const filePath = path.join(process.cwd(), 'public', 'uploads', filename)
+  const filename = params.filename;
+  const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
 
-  console.log('File uploaded:', filePath)
+  console.log('File uploaded:', filePath);
 
   try {
-    await stat(filePath)
+    await stat(filePath);
   } catch (error) {
-    return new NextResponse('File not found', { status: 404 })
+    return new NextResponse('File not found', { status: 404 });
   }
 
-  const ext = path.extname(filename).toLowerCase()
-  const contentType = getContentType(ext)
+  const ext = path.extname(filename).toLowerCase();
+  const contentType = getContentType(ext);
 
-  const fileStream = createReadStream(filePath)
+  const fileStream = createReadStream(filePath);
 
   return new NextResponse(fileStream as any, {
     headers: {
       'Content-Type': contentType,
       'Content-Disposition': `inline; filename="${filename}"`,
     },
-  })
+  });
 }
 
 function getContentType(ext: string): string {
@@ -37,7 +37,7 @@ function getContentType(ext: string): string {
     '.jpeg': 'image/jpeg',
     '.png': 'image/png',
     '.gif': 'image/gif',
-  }
+  };
 
-  return contentTypes[ext] || 'application/octet-stream'
+  return contentTypes[ext] || 'application/octet-stream';
 }

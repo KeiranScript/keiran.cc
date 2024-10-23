@@ -1,16 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import path from 'path'
-import { createWriteStream } from 'fs'
+import { NextRequest, NextResponse } from 'next/server';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { createWriteStream } from 'fs';
 
 function generateRandomFilename(originalFilename: string): string {
   const ext = path.extname(originalFilename);
 
   const generateRandomString = (length: number): string => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length),
+      );
     }
     return result;
   };
@@ -21,40 +24,51 @@ function generateRandomFilename(originalFilename: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { filename } = await request.json()
+    const { filename } = await request.json();
 
-    const chunksDir = path.join(process.cwd(), 'public', 'uploads', 'chunks', filename)
+    const chunksDir = path.join(
+      process.cwd(),
+      'public',
+      'uploads',
+      'chunks',
+      filename,
+    );
 
-    const finalFilename = generateRandomFilename(filename)
-    const finalFilePath = path.join(process.cwd(), 'public', 'uploads', finalFilename)
+    const finalFilename = generateRandomFilename(filename);
+    const finalFilePath = path.join(
+      process.cwd(),
+      'public',
+      'uploads',
+      finalFilename,
+    );
 
-    const chunkFiles = await fs.readdir(chunksDir)
+    const chunkFiles = await fs.readdir(chunksDir);
     chunkFiles.sort((a, b) => {
-      const aIndex = parseInt(a.split('-')[1])
-      const bIndex = parseInt(b.split('-')[1])
-      return aIndex - bIndex
-    })
+      const aIndex = parseInt(a.split('-')[1]);
+      const bIndex = parseInt(b.split('-')[1]);
+      return aIndex - bIndex;
+    });
 
-    const writeStream = createWriteStream(finalFilePath)
+    const writeStream = createWriteStream(finalFilePath);
 
     for (const chunkFile of chunkFiles) {
-      const chunkPath = path.join(chunksDir, chunkFile)
-      const chunk = await fs.readFile(chunkPath)
-      writeStream.write(chunk)
+      const chunkPath = path.join(chunksDir, chunkFile);
+      const chunk = await fs.readFile(chunkPath);
+      writeStream.write(chunk);
     }
 
     await new Promise<void>((resolve, reject) => {
       writeStream.end((err: Error | null) => {
-        if (err) reject(err)
-        else resolve()
-      })
-    })
+        if (err) reject(err);
+        else resolve();
+      });
+    });
 
-    await fs.rm(chunksDir, { recursive: true, force: true })
+    await fs.rm(chunksDir, { recursive: true, force: true });
 
-    return NextResponse.json({ url: `/${finalFilename}` })
+    return NextResponse.json({ url: `/${finalFilename}` });
   } catch (error) {
-    console.error('Finalization error:', error)
-    return new NextResponse('File finalization failed', { status: 500 })
+    console.error('Finalization error:', error);
+    return new NextResponse('File finalization failed', { status: 500 });
   }
 }

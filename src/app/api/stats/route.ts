@@ -10,7 +10,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(stats);
   } catch (error) {
     console.error('Error fetching storage stats:', error);
-    return NextResponse.json({ error: 'Failed to fetch storage stats' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch storage stats' },
+      { status: 500 },
+    );
   }
 }
 
