@@ -13,7 +13,7 @@ const pasteSchema = z.object({
   content: z.string().min(1).max(100000),
   language: z.string().max(50),
   expirationTime: z.string().optional(),
-  domain: z.string().min(1),
+  domain: z.string().min(1).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const pasteUrl = `https://${domain}/p/${paste.id}`;
+    const returnDomain = domain || 'keiran.cc';
+    const pasteUrl = `https://${returnDomain}/p/${paste.id}`;
 
     return NextResponse.json({ url: pasteUrl });
   } catch (error) {

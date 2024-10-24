@@ -13,7 +13,7 @@ const rateLimiter = new Map();
 const base_url = process.env.NEXT_PUBLIC_BASE_URL || 'https://keiran.cc';
 
 export async function POST(request: NextRequest) {
-  const ip = request.ip ?? '127.0.0.1';
+  const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
   const now = Date.now();
   const windowStart = now - rateLimit.windowMs;
 
@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
+    const domain = formData.get('domain') as string | null;
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -45,8 +46,9 @@ export async function POST(request: NextRequest) {
     const filePath = path.join(process.cwd(), 'public', 'uploads', randomName);
 
     await writeFile(filePath, buffer);
-    const rawUrl = `${base_url}/api/${randomName}`;
-    const imageUrl = `${base_url}/${randomName}`;
+    const url = domain || base_url;
+    const rawUrl = `${url}/api/${randomName}`;
+    const imageUrl = `${url}/${randomName}`;
 
     return NextResponse.json({ rawUrl, imageUrl });
   } catch (error) {

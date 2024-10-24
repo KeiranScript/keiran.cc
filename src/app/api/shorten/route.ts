@@ -31,7 +31,7 @@ const shortenSchema = z.object({
       { message: 'Invalid datetime format' },
     )
     .optional(),
-  domain: z.string().min(1),
+  domain: z.string().min(1).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -84,8 +84,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const returnDomain = domain || 'keiran.cc';
     return NextResponse.json({
-      shortUrl: `https://${domain}/s/${shortUrl.shortCode}`,
+      shortUrl: `https://${returnDomain}/s/${shortUrl.shortCode}`,
     });
   } catch (error) {
     console.error('Error shortening URL:', error);
