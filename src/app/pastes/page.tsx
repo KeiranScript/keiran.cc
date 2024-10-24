@@ -172,7 +172,6 @@ export default function PastePage() {
       URL: '$json:url$',
     };
 
-
     const blob = new Blob([JSON.stringify(config, null, 2)], {
       type: 'application/json',
     });

@@ -10,7 +10,7 @@ const rateLimit = {
 
 const rateLimiter = new Map();
 
-const BASE_URL = 'keiran.cc';
+const base_url = process.env.NEXT_PUBLIC_BASE_URL || 'https://keiran.cc';
 
 export async function POST(request: NextRequest) {
   const ip = request.ip ?? '127.0.0.1';
@@ -28,31 +28,32 @@ export async function POST(request: NextRequest) {
 
   rateLimiter.set(ip, [...requestsInWindow, now]);
 
-  const data = await request.formData();
-  const file: File | null = data.get('file') as unknown as File;
-  const domain: string | null = data.get('domain') as string | null;
-
-  if (!file) {
-    return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
-  }
-
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
-  const originalExtension = path.extname(file.name);
-  const randomName = crypto.randomBytes(4).toString('hex') + originalExtension;
-  const filePath = path.join(process.cwd(), 'public', 'uploads', randomName);
-
   try {
-    await writeFile(filePath, buffer);
+    const formData = await request.formData();
+    const file = formData.get('file') as File | null;
 
-    const base_url = domain || BASE_URL;
-    const rawUrl = `https://${base_url}/api/${randomName}`;
-    const imageUrl = `https://${base_url}/${randomName}`;
+    if (!file) {
+      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const originalExtension = path.extname(file.name);
+    const randomName =
+      crypto.randomBytes(4).toString('hex') + originalExtension;
+    const filePath = path.join(process.cwd(), 'public', 'uploads', randomName);
+
+    await writeFile(filePath, buffer);
+    const rawUrl = `${base_url}/api/${randomName}`;
+    const imageUrl = `${base_url}/${randomName}`;
 
     return NextResponse.json({ rawUrl, imageUrl });
   } catch (error) {
-    console.error('Error saving file:', error);
-    return NextResponse.json({ error: 'Error saving file' }, { status: 500 });
+    console.error('Error processing file:', error);
+    return NextResponse.json(
+      { error: 'Error processing file' },
+      { status: 500 },
+    );
   }
 }
