@@ -40,3 +40,5 @@ next-env.d.ts
 /public/uploads/
 
 /prisma/migrations/
+
+/public/.well-known/
