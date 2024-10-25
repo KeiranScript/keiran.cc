@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import Navbar from '@/components/navbar';
 import { Toaster } from '@/components/ui/toaster';
+import { AiChat } from '@/components/ai-chat';
 import type { Metadata } from 'next';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -38,6 +39,7 @@ export default function RootLayout({
             <main className="container mx-auto px-4 py-8 flex-1">
               {children}
             </main>
+            <AiChat />
           </div>
           <Toaster />
         </ThemeProvider>

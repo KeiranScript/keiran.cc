@@ -2,31 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';
-
-const rateLimit = {
-  windowMs: 1000, // 1s
-  max: 1,
-};
-
-const rateLimiter = new Map();
+import { rateLimit } from '@/middleware/rateLimit'
 
 const base_url = process.env.NEXT_PUBLIC_BASE_URL || 'https://keiran.cc';
 
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
-  const now = Date.now();
-  const windowStart = now - rateLimit.windowMs;
-
-  const requestCount: number[] = rateLimiter.get(ip) || [];
-  const requestsInWindow = requestCount.filter(
-    (timestamp: number) => timestamp > windowStart,
-  );
-
-  if (requestsInWindow.length >= rateLimit.max) {
-    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
-  }
-
-  rateLimiter.set(ip, [...requestsInWindow, now]);
+  const rateLimitResult = await rateLimit(request);
+  if (rateLimitResult) return rateLimitResult;
 
   try {
     const formData = await request.formData();
@@ -47,8 +29,8 @@ export async function POST(request: NextRequest) {
 
     await writeFile(filePath, buffer);
     const url = domain || base_url;
-    const rawUrl = `${url}/api/${randomName}`;
-    const imageUrl = `${url}/${randomName}`;
+    const rawUrl = `https://${url}/api/${randomName}`;
+    const imageUrl = `https://${url}/${randomName}`;
 
     return NextResponse.json({ rawUrl, imageUrl });
   } catch (error) {

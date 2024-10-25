@@ -74,7 +74,7 @@ export default function FileUpload({
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
     if (selectedFile.size > MAX_FILE_SIZE) {
-      // setToast('File too large', 'Maximum file size is 1GB.')
+      setToast('File too large', 'Maximum file size is 1GB.')
     } else {
       setFile(selectedFile);
     }
@@ -130,10 +130,6 @@ export default function FileUpload({
   const copyRawLink = () => {
     if (rawUrl) {
       navigator.clipboard.writeText(rawUrl);
-      setToast(
-        'Raw Link Copied',
-        'The raw file link has been copied to your clipboard.',
-      );
     }
   };
 
@@ -160,11 +156,6 @@ export default function FileUpload({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-
-    setToast(
-      'ShareX Config Generated',
-      'The ShareX configuration file has been downloaded.',
-    );
   };
 
   return (
@@ -289,8 +280,4 @@ export default function FileUpload({
       </CardContent>
     </Card>
   );
-}
-
-function setRawUrl(rawUrl: any) {
-  throw new Error('Function not implemented.');
 }

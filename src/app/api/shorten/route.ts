@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { z } from 'zod';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { rateLimit } from '@/middleware/rateLimit'
 
 const prisma = new PrismaClient();
 
@@ -35,6 +36,9 @@ const shortenSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const rateLimitResult = await rateLimit(request);
+  if (rateLimitResult) return rateLimitResult;
+  
   try {
     let body;
     const contentType = request.headers.get('content-type');
