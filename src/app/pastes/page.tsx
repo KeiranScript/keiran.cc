@@ -110,7 +110,7 @@ const languageOptions = [
   { value: 'zig', label: 'Zig' },
 ];
 
-const DOMAINS = ['keiran.cc', 'e-z.software', 'keiran.live', 'keiran.tech'];
+const DOMAINS = ['keiran.cc', 'e-z.software', 'keirandev.me', 'keiran.tech'];
 
 export default function PastePage() {
   const [isLoading, setIsLoading] = useState(false);

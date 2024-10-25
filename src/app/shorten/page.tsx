@@ -55,7 +55,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const DOMAINS = ['keiran.cc', 'e-z.software', 'keiran.live', 'keiran.tech'];
+const DOMAINS = ['keiran.cc', 'e-z.software', 'keirandev.me', 'keiran.tech'];
 
 export default function ShortenPage() {
   const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);

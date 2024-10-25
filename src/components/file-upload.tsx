@@ -34,9 +34,8 @@ const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB in bytes
 const DOMAINS = [
   'keiran.cc',
   'e-z.software',
-  'keiran.live',
-  'keiran.tech',
   'keirandev.me',
+  'keiran.tech',
 ];
 
 export default function FileUpload({
