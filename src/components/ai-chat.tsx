@@ -2,18 +2,35 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cat, Send, X, Loader2, Volume2, VolumeX } from 'lucide-react';
+import {
+  Cat,
+  Send,
+  X,
+  Loader2,
+  Volume2,
+  VolumeX,
+  Palette,
+  RotateCcw,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/components/ui/use-toast';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { updateCSSVariables, resetCSSVariables } from '@/utils/cssVariables';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
+
+const MAX_CHAR_LIMIT = 500;
 
 export function AiChat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +38,10 @@ export function AiChat() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [colorChanges, setColorChanges] = useState<Record<
+    string,
+    string
+  > | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,7 +55,7 @@ export function AiChat() {
     if (!input.trim()) return;
 
     const newMessage: Message = { role: 'user', content: input };
-    setMessages(prev => [...prev, newMessage]);
+    setMessages((prev) => [...prev, newMessage]);
     setInput('');
     setIsLoading(true);
 
@@ -53,9 +74,18 @@ export function AiChat() {
       }
 
       const data = await response.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: data.message },
+      ]);
+
+      if (data.colorChanges) {
+        setColorChanges(data.colorChanges);
+        updateCSSVariables(data.colorChanges);
+        toast.info('The site colors have been updated.');
+      }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to fetch response');
+      toast.error("Couldn't fetch response. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +98,7 @@ export function AiChat() {
       utterance.onend = () => setIsSpeaking(false);
       speechSynthesis.speak(utterance);
     } else {
-      toast.error('Text-to-speech is not supported in your browser');
+      toast.error('Text-to-speech is not supported in your browser.');
     }
   };
 
@@ -76,6 +106,14 @@ export function AiChat() {
     if ('speechSynthesis' in window) {
       speechSynthesis.cancel();
       setIsSpeaking(false);
+    }
+  };
+
+  const resetColors = () => {
+    if (colorChanges) {
+      resetCSSVariables(colorChanges);
+      setColorChanges(null);
+      toast.info('The site colors have been reset.');
     }
   };
 
@@ -107,15 +145,38 @@ export function AiChat() {
           >
             <Card className="border-primary/10 bg-background/80 backdrop-blur-sm">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Chat with MeowAI</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0 hover:bg-primary/10"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+                <CardTitle className="text-sm font-medium">
+                  Chat with MeowAI
+                </CardTitle>
+                <div className="flex items-center space-x-2">
+                  {colorChanges && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-primary/10"
+                            onClick={resetColors}
+                          >
+                            <RotateCcw className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Reset colors</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0 hover:bg-primary/10"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-[300px] mb-4 pr-4" ref={scrollAreaRef}>
@@ -176,13 +237,23 @@ export function AiChat() {
                     type="text"
                     placeholder="Type your message..."
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    onChange={(e) =>
+                      setInput(e.target.value.slice(0, MAX_CHAR_LIMIT))
+                    }
                     className="flex-grow mr-2 bg-background/50"
+                    maxLength={MAX_CHAR_LIMIT}
                   />
-                  <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+                  <Button
+                    type="submit"
+                    size="icon"
+                    disabled={isLoading || !input.trim()}
+                  >
                     <Send className="h-4 w-4" />
                   </Button>
                 </form>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  {input.length}/{MAX_CHAR_LIMIT} characters
+                </div>
                 {isSpeaking && (
                   <Button
                     variant="outline"
