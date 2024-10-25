@@ -74,6 +74,13 @@ export function AiChat() {
   const speakMessage = (message: string) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(message);
+      const voices = speechSynthesis.getVoices();
+      const femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('female'));
+      
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      }
+
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);
       speechSynthesis.speak(utterance);
