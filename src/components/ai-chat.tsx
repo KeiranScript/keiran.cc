@@ -55,11 +55,7 @@ export function AiChat() {
       const data = await response.json();
       setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to get a response from the AI',
-        variant: 'destructive',
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to fetch response');
     } finally {
       setIsLoading(false);
     }
@@ -72,11 +68,7 @@ export function AiChat() {
       utterance.onend = () => setIsSpeaking(false);
       speechSynthesis.speak(utterance);
     } else {
-      toast({
-        title: 'Error',
-        description: 'Text-to-speech is not supported in your browser.',
-        variant: 'destructive',
-      });
+      toast.error('Text-to-speech is not supported in your browser');
     }
   };
 
