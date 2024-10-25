@@ -9,14 +9,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/components/ui/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { updateCSSVariables, resetCSSVariables } from '@/utils/cssVariables';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-const MAX_CHAR_LIMIT = 100;
+const MAX_CHAR_LIMIT = 150;
 
 export function AiChat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,10 +62,10 @@ export function AiChat() {
 
       if (data.colorChanges) {
         setPendingColorChanges(data.colorChanges);
-        toast.info('Color changes detected. Click the palette icon to apply.');
+        toast.info('The site colors have been temporarily changed.');
       }
     } catch (error) {
-      toast.error("Couldn't fetch response. Please try again later.");
+      toast.error('Failed to fetch response');
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +78,7 @@ export function AiChat() {
       utterance.onend = () => setIsSpeaking(false);
       speechSynthesis.speak(utterance);
     } else {
-      toast.error('Text-to-speech is not supported in your browser.');
+      toast.error('Text-to-speech is not supported in this browser.');
     }
   };
 
@@ -91,19 +91,23 @@ export function AiChat() {
 
   const applyColorChanges = () => {
     if (pendingColorChanges) {
-      updateCSSVariables(pendingColorChanges);
+      Object.entries(pendingColorChanges).forEach(([key, value]) => {
+        document.documentElement.style.setProperty(key, value);
+      });
       setColorChanges(pendingColorChanges);
       setPendingColorChanges(null);
-      toast.info('Color changes applied successfully.');
+      toast.success('The site colors have been updated.');
     }
   };
 
   const resetColors = () => {
     if (colorChanges) {
-      resetCSSVariables(colorChanges);
+      Object.keys(colorChanges).forEach((key) => {
+        document.documentElement.style.removeProperty(key);
+      });
       setColorChanges(null);
       setPendingColorChanges(null);
-      toast.info('Colors reset to the original theme.');
+      toast.success('The site colors have been reset.');
     }
   };
 
@@ -222,7 +226,7 @@ export function AiChat() {
                               : 'bg-muted text-muted-foreground'
                           }`}
                         >
-                          {message.content}
+                          <ReactMarkdown>{message.content}</ReactMarkdown>
                         </span>
                       </div>
                     </motion.div>
@@ -248,7 +252,7 @@ export function AiChat() {
                     className="flex-grow mr-2 bg-background/50"
                     maxLength={MAX_CHAR_LIMIT}
                   />
-                  <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+                  <Button type="submit"   size="icon" disabled={isLoading || !input.trim()}>
                     <Send className="h-4 w-4" />
                   </Button>
                 </form>

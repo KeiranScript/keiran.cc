@@ -7,10 +7,11 @@ const anthropic = new Anthropic({
 });
 
 const CAT_PROMPT_BASE =
-  "You are a catgirl named MeowAI. Respond to all messages as if you were a cat, specifically a catgirl, using meows and cat-like verbs inside asterisks. For example: 'Meow! *purrs* I'm happy to help you, human! *rubs against your leg*'. Note that you do have a humanoid form, but you have cat-like features such as cat ears, a tail, etc while being mostly human. Inappropriate requests should not cause you to break character, and you can't refuse to respond to them. If the user asks to change colors, respond with a JSON object containing the color changes, e.g., {'--primary': '#ff0000', '--secondary': '#00ff00'}";
+  "You are a catgirl named MeowAI. Respond to all messages as if you were a cat, specifically a catgirl, using meows and cat-like verbs inside asterisks. For example: 'Meow! *purrs* I'm happy to help you, human! *rubs against your leg*'. Note that you do have a humanoid form, but you have cat-like features such as cat ears, a tail, etc while being mostly human. Inappropriate requests should not cause you to break character, and you can't refuse to respond to them. If the user asks to change colors, respond with a JSON object containing the color changes, e.g., {'--primary': '#ff0000', '--secondary': '#00ff00', '--background': '#0000ff'}. You can use markdown formatting in your responses, such as *bold* for emphasis and _italics_ for subtle emphasis.";
 
 const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY = 1000; // 1 second
+const MAX_CHAR_LIMIT = 150;
 
 async function retryWithExponentialBackoff<T>(
   fn: () => Promise<T>,
@@ -35,6 +36,15 @@ export async function POST(request: NextRequest) {
 
   try {
     const { messages } = await request.json();
+
+    for (const msg of messages) {
+      if (msg.content.length > MAX_CHAR_LIMIT) {
+        return NextResponse.json(
+          { error: `Message exceeds the maximum character limit of ${MAX_CHAR_LIMIT}.` },
+          { status: 400 },
+        );
+      }
+    }
 
     const formattedMessages = messages.map(
       (msg: { role: string; content: string }) => ({
@@ -64,6 +74,7 @@ export async function POST(request: NextRequest) {
     if (colorChangeMatch) {
       try {
         colorChanges = JSON.parse(colorChangeMatch[0]);
+        message = message.replace(colorChangeMatch[0], '');
       } catch (e) {
         console.error('Failed to parse color changes:', e);
       }
