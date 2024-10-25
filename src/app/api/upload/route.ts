@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';
-import { rateLimit } from '@/middleware/rateLimit'
+import { rateLimit } from '@/middleware/rateLimit';
 
 const base_url = process.env.NEXT_PUBLIC_BASE_URL || 'keiran.cc';
 

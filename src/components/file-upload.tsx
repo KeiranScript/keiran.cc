@@ -74,7 +74,7 @@ export default function FileUpload({
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
     if (selectedFile.size > MAX_FILE_SIZE) {
-      setToast('File too large', 'Maximum file size is 1GB.')
+      setToast('File too large', 'Maximum file size is 1GB.');
     } else {
       setFile(selectedFile);
     }

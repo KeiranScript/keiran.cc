@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import { z } from 'zod';
 import DOMPurify from 'isomorphic-dompurify';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { rateLimit } from '@/middleware/rateLimit'
+import { rateLimit } from '@/middleware/rateLimit';
 
 const prisma = new PrismaClient();
 
@@ -20,7 +20,7 @@ const pasteSchema = z.object({
 export async function POST(request: NextRequest) {
   const rateLimitResult = await rateLimit(request);
   if (rateLimitResult) return rateLimitResult;
-  
+
   try {
     const body = await request.json();
     const { title, description, content, language, expirationTime, domain } =
