@@ -4,7 +4,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { rateLimit } from '@/middleware/rateLimit'
 
-const base_url = process.env.NEXT_PUBLIC_BASE_URL || 'https://keiran.cc';
+const base_url = process.env.NEXT_PUBLIC_BASE_URL || 'keiran.cc';
 
 export async function POST(request: NextRequest) {
   const rateLimitResult = await rateLimit(request);
