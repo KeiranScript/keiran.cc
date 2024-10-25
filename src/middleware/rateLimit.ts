@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Redis } from '@upstash/redis';
+import { PrismaClient } from '@prisma/client';
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+const prisma = new PrismaClient();
 
 interface RateLimitConfig {
   limit: number;
@@ -41,9 +38,7 @@ const routeConfigs: { [key: string]: RateLimitConfig } = {
 };
 
 export async function rateLimit(request: NextRequest) {
-  const ip =
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    '127.0.0.1';
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1';
   const path = request.nextUrl.pathname;
 
   const config = routeConfigs[path];
@@ -51,31 +46,70 @@ export async function rateLimit(request: NextRequest) {
 
   const now = Date.now();
   const windowStart = now - config.window * 1000;
+  const blacklistWindowStart = now - config.blacklistWindow * 1000;
 
-  const requestCount = await redis.zcount(`${path}:${ip}`, windowStart, now);
-  const blacklistCount = await redis.zcount(
-    `blacklist:${path}:${ip}`,
-    now - config.blacklistWindow * 1000,
-    now,
-  );
-
-  if (blacklistCount >= config.blacklistThreshold) {
-    return NextResponse.json(
-      { error: 'You have been blacklisted from this service' },
-      { status: 403 },
-    );
-  }
-
-  if (requestCount >= config.limit) {
-    await redis.zadd(`blacklist:${path}:${ip}`, {
-      score: now,
-      member: now.toString(),
+  try {
+    const blacklistCount = await prisma.blacklistLog.count({
+      where: {
+        ip,
+        path,
+        timestamp: {
+          gt: blacklistWindowStart
+        }
+      }
     });
-    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+
+    if (blacklistCount >= config.blacklistThreshold) {
+      return NextResponse.json(
+        { error: 'You have been blacklisted from this service' },
+        { status: 403 }
+      );
+    }
+
+    const requestCount = await prisma.requestLog.count({
+      where: {
+        ip,
+        path,
+        timestamp: {
+          gt: windowStart
+        }
+      }
+    });
+
+    if (requestCount >= config.limit) {
+      await prisma.blacklistLog.create({
+        data: {
+          ip,
+          path,
+          timestamp: now
+        }
+      });
+      
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429 }
+      );
+    }
+
+    await prisma.requestLog.create({
+      data: {
+        ip,
+        path,
+        timestamp: now
+      }
+    });
+
+    await prisma.requestLog.deleteMany({
+      where: {
+        timestamp: {
+          lt: windowStart
+        }
+      }
+    });
+
+    return null;
+  } catch (error) {
+    console.error('Rate limiting error:', error);
+    return null;
   }
-
-  await redis.zadd(`${path}:${ip}`, { score: now, member: now.toString() });
-  await redis.zremrangebyscore(`${path}:${ip}`, 0, windowStart);
-
-  return null;
 }

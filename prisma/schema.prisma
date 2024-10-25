@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,19 +11,41 @@ datasource db {
 }
 
 model ShortUrl {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   originalUrl String
-  shortCode   String   @unique
-  createdAt   DateTime @default(now())
+  shortCode   String    @unique
+  createdAt   DateTime  @default(now())
   expiresAt   DateTime?
 }
 
 model Paste {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   description String?
-  content     String   @db.Text
+  content     String    @db.Text
   language    String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
   expiresAt   DateTime?
+}
+
+model RequestLog {
+  id        String   @id @default(cuid())
+  ip        String
+  path      String
+  timestamp BigInt
+  createdAt DateTime @default(now())
+
+  @@index([ip, path, timestamp])
+  @@map("request_logs")
+}
+
+model BlacklistLog {
+  id        String   @id @default(cuid())
+  ip        String
+  path      String
+  timestamp BigInt
+  createdAt DateTime @default(now())
+
+  @@index([ip, path, timestamp])
+  @@map("blacklist_logs")
 }
