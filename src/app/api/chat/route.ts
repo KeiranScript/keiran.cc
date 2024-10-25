@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { rateLimit } from '@/middleware/rateLimit';
+import { StreamingTextResponse } from 'ai';
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -43,23 +44,34 @@ export async function POST(request: NextRequest) {
       }),
     );
 
-    const response = await retryWithExponentialBackoff(() =>
-      anthropic.messages.create({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 1000,
-        system: CAT_PROMPT_BASE,
-        messages: formattedMessages,
-      }),
+    const stream: AsyncIterable<{ type: string; delta: { text: string } }> = await retryWithExponentialBackoff(
+      () =>
+        new Promise((resolve, reject) => {
+          const messageStream = anthropic.messages.stream({
+            model: 'claude-3-5-sonnet-20241022',
+            max_tokens: 1000,
+            system: CAT_PROMPT_BASE,
+            messages: formattedMessages,
+          });
+
+          messageStream.on('message', (message) => resolve(message as unknown as AsyncIterable<{ type: string; delta: { text: string } }>));
+          messageStream.on('error', reject);
+        }),
     );
 
-    let message = '';
-    for (const content of response.content) {
-      if (content.type === 'text') {
-        message += content.text;
-      }
-    }
+    const textEncoder = new TextEncoder();
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of stream) {
+          if (chunk.type === 'content_block_delta') {
+            controller.enqueue(textEncoder.encode(chunk.delta.text));
+          }
+        }
+        controller.close();
+      },
+    });
 
-    return NextResponse.json({ message });
+    return new StreamingTextResponse(readableStream);
   } catch (error) {
     console.error('Error in chat API:', error);
     if (error instanceof Error) {
