@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { rateLimit } from '@/middleware/rateLimit';
+import { z } from 'zod';
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -29,6 +30,11 @@ async function retryWithExponentialBackoff<T>(
   }
 }
 
+const messageSchema = z.object({
+  role: z.string(),
+  content: z.string().max(100, { message: 'Message content must be 100 characters or less' }),
+});
+
 export async function POST(request: NextRequest) {
   const rateLimitResult = await rateLimit(request);
   if (rateLimitResult) return rateLimitResult;
@@ -36,11 +42,8 @@ export async function POST(request: NextRequest) {
   try {
     const { messages } = await request.json();
 
-    const formattedMessages = messages.map(
-      (msg: { role: string; content: string }) => ({
-        role: msg.role,
-        content: msg.content,
-      }),
+    const formattedMessages = messages.map((msg: { role: string; content: string }) =>
+      messageSchema.parse(msg),
     );
 
     const response = await retryWithExponentialBackoff(() =>
@@ -52,16 +55,22 @@ export async function POST(request: NextRequest) {
       }),
     );
 
-    let message = ''
+    let message = '';
     for (const content of response.content) {
       if (content.type === 'text') {
-        message += content.text
+        message += content.text;
       }
     }
 
     return NextResponse.json({ message });
   } catch (error) {
     console.error('Error in chat API:', error);
+    if (error instanceof z.ZodError) {
+      const errorMessages = (error as z.ZodError).errors
+        .map((err: { path: any[]; message: any; }) => `${err.path.join('.')}: ${err.message}`)
+        .join(', ');
+      return NextResponse.json({ error: errorMessages }, { status: 400 });
+    }
     if (error instanceof Error) {
       if (error.message.includes('Overloaded')) {
         return NextResponse.json(
