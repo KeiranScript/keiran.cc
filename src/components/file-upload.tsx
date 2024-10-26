@@ -47,9 +47,7 @@ export default function FileUpload({
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [localUploadedFileUrl, setLocalUploadedFileUrl] = useState<
-    string | null
-  >(null);
+  const [localUploadedFileUrl, setLocalUploadedFileUrl] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [rawUrl, setRawUrl] = useState<string | null>(null);
   const [buttonLabel, setButtonLabel] = useState('Upload');
@@ -205,7 +203,9 @@ export default function FileUpload({
         </div>
         <div
           {...getRootProps()}
-          className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 ${isDragActive ? 'border-primary bg-primary/5' : 'border-muted hover:border-primary/50'}`}
+          className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 ${
+            isDragActive ? 'border-primary bg-primary/5' : 'border-muted hover:border-primary/50'
+          }`}
         >
           <input {...getInputProps()} />
           {file ? (
@@ -256,7 +256,7 @@ export default function FileUpload({
           <div className="mt-4">
             <Progress value={uploadProgress} className="w-full" />
             <p className="text-sm text-center mt-2 text-muted-foreground">
-              {Math.round(uploadProgress)}% uploaded
+              Uploading...
             </p>
           </div>
         )}
