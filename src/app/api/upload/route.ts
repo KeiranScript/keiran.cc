@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const filename = crypto.randomBytes(16).toString('hex') + path.extname(file.name);
+    const filename = crypto.randomBytes(4).toString('base64').replace(/[^a-zA-Z0-9]/g, '').substring(0, 8) + path.extname(file.name);
     const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
 
     const chunksDir = path.join(process.cwd(), 'public', 'uploads', 'chunks', filename);
