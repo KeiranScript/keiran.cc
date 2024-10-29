@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
     await fsPromises.rm(chunksDir, { recursive: true, force: true });
 
     const url = domain || base_url;
-    const rawUrl = `https://${url}/api/${filename}`;
-    const imageUrl = `https://${url}/${filename}`;
+    const rawUrl = `${url}/api/${filename}`;
+    const imageUrl = `${url}/${filename}`;
 
     return NextResponse.json({ rawUrl, imageUrl });
   } catch (error) {
