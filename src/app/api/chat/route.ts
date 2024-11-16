@@ -13,6 +13,16 @@ const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY = 1000; // 1 second
 const MAX_CHAR_LIMIT = 150;
 
+/**
+ * Retries a given asynchronous function using exponential backoff strategy.
+ *
+ * @template T - The type of the value that the function resolves to.
+ * @param {() => Promise<T>} fn - The function to execute, which returns a promise.
+ * @param {number} [retries=MAX_RETRIES] - The maximum number of retry attempts.
+ * @param {number} [delay=INITIAL_RETRY_DELAY] - The initial delay between retries, in milliseconds.
+ * @returns {Promise<T>} The result of the function if successful.
+ * @throws Will throw an error if the retries are exhausted or if the error is not related to being overloaded.
+ */
 async function retryWithExponentialBackoff<T>(
   fn: () => Promise<T>,
   retries = MAX_RETRIES,

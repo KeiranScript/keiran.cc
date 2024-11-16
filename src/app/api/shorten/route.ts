@@ -8,6 +8,19 @@ import { rateLimit } from '@/middleware/rateLimit';
 
 const prisma = new PrismaClient();
 
+/**
+ * Validates a request body for the /api/shorten endpoint.
+ *
+ * @property {string} url - The URL to shorten. Must be a valid URL.
+ * @property {string} [customAlias] - An optional custom alias for the shortened
+ * URL. Must only contain letters, numbers, hyphens, and underscores, and must
+ * be 50 characters or less.
+ * @property {string} [expirationTime] - An optional datetime string in the
+ * format of a JavaScript Date object (e.g. "2024-03-20T12:30:00.000Z"). If
+ * provided, the shortened URL will expire at the specified time.
+ * @property {string} [domain] - The domain to use for the shortened URL. If not
+ * provided, the default domain (keiran.cc) will be used.
+ */
 const shortenSchema = z.object({
   url: z
     .string()
@@ -35,6 +48,31 @@ const shortenSchema = z.object({
   domain: z.string().min(1).optional(),
 });
 
+  /**
+   * Handles POST requests to the /api/shorten endpoint.
+   *
+   * The request body should contain the following properties:
+   *
+   * - `url`: The URL to shorten. Must be a valid URL.
+   * - `customAlias`: An optional custom alias for the shortened URL. Must only
+   * contain letters, numbers, hyphens, and underscores, and must be 50 characters
+   * or less.
+   * - `expirationTime`: An optional datetime string in the format of a JavaScript
+   * Date object (e.g. "2024-03-20T12:30:00.000Z"). If provided, the shortened
+   * URL will expire at the specified time.
+   * - `domain`: The domain to use for the shortened URL. If not provided, the
+   * default domain (keiran.cc) will be used.
+   *
+   * The response will contain a JSON object with the following properties:
+   *
+   * - `shortUrl`: The shortened URL.
+   *
+   * If the request is invalid, or if an error occurs while processing the
+   * request, the response will contain a JSON object with an "error" property
+   * that describes the error. The HTTP status code of the response will be
+   * 400 or 500, depending on the type of error.
+   */
+  
 export async function POST(request: NextRequest) {
   const rateLimitResult = await rateLimit(request);
   if (rateLimitResult) return rateLimitResult;

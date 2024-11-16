@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Loader2 } from 'lucide-react';
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 Bytes';
@@ -14,14 +15,7 @@ function formatBytes(bytes: number): string {
 }
 
 const StatsContent = ({ stats }: { stats: any }) => {
-  const [progressValue, setProgressValue] = useState(0);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setProgressValue((stats.usedStorage / stats.totalStorage) * 100);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [stats.usedStorage, stats.totalStorage]);
+  const progressValue = (stats.usedStorage / stats.totalStorage) * 100;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -34,52 +28,27 @@ const StatsContent = ({ stats }: { stats: any }) => {
         Storage Stats
       </motion.h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <Card className="shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105">
-            <CardHeader>
-              <CardTitle>Total Files</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{stats.totalFiles}</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <Card className="shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105">
-            <CardHeader>
-              <CardTitle>Used Storage</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">
-                {formatBytes(stats.usedStorage)}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <Card className="shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105">
-            <CardHeader>
-              <CardTitle>Available Storage</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">
-                {formatBytes(stats.availableStorage)}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
+        {[
+          { title: 'Total Files', value: stats.totalFiles },
+          { title: 'Used Storage', value: formatBytes(stats.usedStorage) },
+          { title: 'Available Storage', value: formatBytes(stats.availableStorage) },
+        ].map(({ title, value }, index) => (
+          <motion.div
+            key={title}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+          >
+            <Card className="shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105">
+              <CardHeader>
+                <CardTitle>{title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">{value}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
       <motion.div
         className="mt-8"
@@ -94,45 +63,35 @@ const StatsContent = ({ stats }: { stats: any }) => {
           <CardContent>
             <Progress value={progressValue} className="w-full" />
             <p className="mt-2 text-sm text-muted-foreground">
-              {formatBytes(stats.usedStorage)} of{' '}
-              {formatBytes(stats.totalStorage)} used
+              {formatBytes(stats.usedStorage)} of {formatBytes(stats.totalStorage)} used
             </p>
           </CardContent>
         </Card>
       </motion.div>
-      <style jsx>{`
-        .glow {
-          position: relative;
-          color: white;
-          text-shadow:
-            0 0 10px rgba(255, 255, 255, 0.5),
-            0 0 20px rgba(255, 255, 255, 0.4),
-            0 0 30px rgba(255, 255, 255, 0.3);
-          transition: text-shadow 0.3s ease;
-        }
-        .glow:hover {
-          text-shadow:
-            0 0 15px rgba(255, 255, 255, 1),
-            0 0 25px rgba(255, 255, 255, 0.8),
-            0 0 35px rgba(255, 255, 255, 0.6);
-        }
-      `}</style>
     </div>
   );
 };
 
 const Stats = () => {
   const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getStats().then((data) => setStats(data));
+    getStats()
+      .then((data) => setStats(data))
+      .catch((error) => console.error('Failed to fetch stats:', error))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (!stats) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="overflow-hidden flex justify-center items-center h-[calc(100vh-1rem)]">
+        <Loader2 className="h-32 w-32 animate-spin text-primary" />
+      </div>
+    );
   }
 
-  return <StatsContent stats={stats} />;
+  return stats ? <StatsContent stats={stats} /> : <div>Failed to load stats</div>;
 };
 
 const getStats = async () => {

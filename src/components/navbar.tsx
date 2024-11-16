@@ -14,6 +14,7 @@ import {
   Code,
   Github,
   Music,
+  User
 } from 'lucide-react';
 import ThemeSwitcher from '@/components/theme-switcher';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -26,6 +27,7 @@ const navItems = [
   { href: '/pastes', icon: Code, label: 'Pastes' },
   { href: '/stats', icon: BarChart2, label: 'Stats' },
   { href: '/gallery', icon: Cat, label: 'Gallery' },
+  { href: '/about', icon: User, label: 'About' },
   {
     href: 'https://github.com/KeiranScript/keiran.cc',
     icon: Github,

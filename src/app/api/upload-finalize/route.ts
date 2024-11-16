@@ -3,6 +3,13 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { createWriteStream } from 'fs';
 
+  /**
+   * Generates a random filename given the original filename.
+   * The generated filename is 6 random alphanumeric characters
+   * followed by the same extension as the original filename.
+   * @param originalFilename The original filename to generate a random filename from.
+   * @returns A random filename.
+   */
 function generateRandomFilename(originalFilename: string): string {
   const ext = path.extname(originalFilename);
 
@@ -22,6 +29,18 @@ function generateRandomFilename(originalFilename: string): string {
   return randomName;
 }
 
+/**
+ * Handles POST requests to finalize the upload process by merging file chunks.
+ *
+ * Expects a JSON request body with a `filename` property, which specifies
+ * the directory containing the file chunks. The function reads all the chunks,
+ * sorts them, and writes them into a single file with a randomly generated 
+ * filename. The original chunks are deleted after merging. 
+ *
+ * The response contains a JSON object with a `url` property, which is the
+ * path to the finalized file. If an error occurs during the process, the 
+ * response contains an error message with a 500 status code.
+ */
 export async function POST(request: NextRequest) {
   try {
     const { filename } = await request.json();

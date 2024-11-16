@@ -1,39 +1,41 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion, useAnimation, useDragControls } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
+import { motion, useAnimation, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight, Upload, Shield, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
+import { cn } from '@/lib/utils';
 
 export default function LandingPage() {
   const controls = useAnimation();
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const featuresRef = useRef(null);
+  const isFeaturesInView = useInView(featuresRef, { once: true, margin: "-100px" });
+  const footerRef = useRef(null);
+  const isFooterInView = useInView(footerRef, { once: true, margin: "-100px" });
 
   useEffect(() => {
-    controls.start('visible');
+    if (typeof window !== 'undefined') {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    }
+  }, []);
 
+  useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setCursorPosition({ x: e.clientX, y: e.clientY });
+      setMousePosition({ x: e.clientX, y: e.clientY });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [controls]);
-
-  const dragControls = useDragControls();
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
-      },
-    },
-  };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('mousemove', handleMouseMove);
+      return () => window.removeEventListener('mousemove', handleMouseMove);
+    }
+  }, []);
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -48,31 +50,23 @@ export default function LandingPage() {
   };
 
   const buttonVariants = {
-    hover: { scale: 1.05, transition: { duration: 0.2 } },
-    tap: { scale: 0.95, transition: { duration: 0.2 } },
+    hover: {
+      scale: 1.05,
+      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
+      transition: { duration: 0.3 },
+    },
+    tap: {
+      scale: 0.95,
+      transition: { duration: 0.2 },
+    },
   };
 
   const cardVariants = {
     hover: {
-      y: -5,
-      boxShadow: '0 10px 20px rgba(0,0,0,0.2)',
+      y: -10,
+      scale: 1.02,
+      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
       transition: { duration: 0.3 },
-    },
-  };
-
-  const iconVariants = {
-    hidden: { scale: 0 },
-    visible: {
-      scale: 1,
-      transition: {
-        type: 'spring',
-        stiffness: 260,
-        damping: 20,
-      },
-    },
-    hover: {
-      rotate: 360,
-      transition: { duration: 0.6 },
     },
   };
 
@@ -82,43 +76,64 @@ export default function LandingPage() {
       transition: {
         duration: 5,
         repeat: Infinity,
-
         ease: 'easeInOut',
       },
     },
   };
 
   return (
-    <div className="relative z-0 overflow-hidden">
-      <div className="min-h-screen overflow-hidden relative">
+    <div className="relative z-0 overflow-hidden min-h-screen">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--primary-rgb)_0%,_transparent_65%)] opacity-10" />
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 rounded-full bg-primary/20"
+            initial={{ x: Math.random() * (windowSize.width || 1000), y: -20 }}
+            animate={{
+              y: (windowSize.height || 800) + 20,
+              x: Math.random() * (windowSize.width || 1000),
+            }}
+            transition={{
+              duration: Math.random() * 5 + 5,
+              repeat: Infinity,
+              ease: 'linear',
+              delay: Math.random() * 5,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="min-h-screen relative">
         <motion.div
-          className="container mx-auto px-4 py-16 md:py-24 relative z-10 overflow-hidden"
-          variants={containerVariants}
+          className="container mx-auto px-4 py-16 md:py-24 relative z-10"
           initial="hidden"
           animate="visible"
         >
           <motion.h1
-            className="text-4xl md:text-6xl font-extrabold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary"
+            className="text-5xl md:text-7xl font-extrabold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-secondary"
             variants={itemVariants}
             animate="animate"
           >
             <motion.span variants={titleVariants}>Welcome to </motion.span>
-            <motion.span variants={titleVariants} className="text-primary">
+            <motion.span variants={titleVariants} className="text-primary relative">
               AnonHost
+              <span className="absolute -inset-1 bg-primary/10 blur-xl" />
             </motion.span>
           </motion.h1>
+
           <motion.div
-            className="text-xl md:text-2xl text-center text-muted-foreground mb-12 overflow-hidden"
+            className="text-xl md:text-3xl text-center text-muted-foreground mb-12"
             variants={itemVariants}
           >
             <TextGenerateEffect
-              className="text-xl md:text-2xl text-center text-muted-foreground mb-12"
               words="Upload and share files anonymously. For free, forever."
               duration={1}
             />
           </motion.div>
+
           <motion.div
-            className="flex justify-center mb-16 overflow-hidden"
+            className="flex justify-center mb-24"
             variants={itemVariants}
           >
             <Link href="/upload">
@@ -126,72 +141,98 @@ export default function LandingPage() {
                 variants={buttonVariants}
                 whileHover="hover"
                 whileTap="tap"
-                className="relative"
+                className="relative group"
               >
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-full blur-lg opacity-50 group-hover:opacity-100 transition duration-500" />
                 <Button
                   size="lg"
-                  className="text-lg bg-primary hover:bg-primary/90 text-primary-foreground"
+                  className="relative text-lg bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-12 py-6"
                 >
-                  Start Uploading <ArrowRight className="ml-2" />
+                  Start Uploading{' '}
+                  <motion.span
+                    className="ml-2 inline-block"
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <ArrowRight className="w-6 h-6" />
+                  </motion.span>
                 </Button>
               </motion.div>
             </Link>
           </motion.div>
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-            variants={containerVariants}
+
+          <motion.div 
+            ref={featuresRef}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 mt-32"
+            style={{
+              transform: isFeaturesInView ? "none" : "translateY(100px)",
+              opacity: isFeaturesInView ? 1 : 0,
+              transition: "all 0.9s cubic-bezier(0.17, 0.55, 0.55, 1) 0.5s"
+            }}
           >
             {[
               {
                 icon: Upload,
                 title: 'Easy Uploads',
-                description:
-                  'Drag and drop or click to upload files up to 1GB.',
+                description: 'Drag and drop or click to upload files up to 1GB.',
               },
               {
                 icon: Shield,
                 title: 'Anonymous Sharing',
-                description:
-                  'No account required. Your privacy is our priority.',
+                description: 'No account required. Your privacy is our priority.',
               },
               {
                 icon: Zap,
                 title: 'Lightning Fast',
-                description:
-                  'Optimized for speed, your files are ready in seconds.',
+                description: 'Optimized for speed, your files are ready in seconds.',
               },
-            ].map((feature, index) => {
-              return (
-                <motion.div
-                  key={index}
-                  className="rounded-lg p-6 shadow-lg border border-primary/10 backdrop-blur-sm hover:shadow-xl"
-                  variants={itemVariants}
-                  whileHover={cardVariants.hover}
-                  dragControls={dragControls}
-                  dragMomentum={true}
-                  dragElastic={1}
-                  dragTransition={{ bounceStiffness: 100, bounceDamping: 0 }}
-                  onDragStart={() => controls.start({ scale: 1.05 })}
-                  onDragEnd={() => controls.start({ scale: 1 })}
-                >
-                  <motion.div variants={iconVariants}>
-                    <feature.icon className="w-12 h-12 text-primary mb-4" />
-                  </motion.div>
-                  <h2 className="text-2xl font-bold mb-2">{feature.title}</h2>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </motion.div>
-              );
-            })}
+            ].map(({ icon: Icon, title, description }, index) => (
+              <motion.div
+                key={index}
+                className={cn(
+                  'rounded-xl p-8 shadow-lg border border-primary/10',
+                  'backdrop-blur-sm hover:shadow-xl transition-all duration-300',
+                  'bg-gradient-to-br from-background/80 to-background/40',
+                  'relative group'
+                )}
+                variants={cardVariants}
+                whileHover="hover"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 opacity-0 group-hover:opacity-100 transition duration-500 rounded-xl blur" />
+                <div className="relative">
+                  <Icon className="w-16 h-16 text-primary mb-6" />
+                </div>
+                <h2 className="text-2xl font-bold mb-4 relative">
+                  {title}
+                </h2>
+                <p className="text-muted-foreground text-lg relative">
+                  {description}
+                </p>
+              </motion.div>
+            ))}
           </motion.div>
         </motion.div>
-        <div className="text-center py-4">
+
+        <motion.div
+          ref={footerRef}
+          className="text-center py-8 bg-gradient-to-t from-background/80 to-transparent backdrop-blur-sm"
+          style={{
+            transform: isFooterInView ? "none" : "translateY(20px)",
+            opacity: isFooterInView ? 1 : 0,
+            transition: "all 0.6s cubic-bezier(0.17, 0.55, 0.55, 1) 0.3s"
+          }}
+        >
           <p className="text-sm text-muted-foreground">
             Proudly open source on{' '}
-            <a href="https://github.com/KeiranScript/keiran.cc" target="_blank">
+            <a
+              href="https://github.com/KeiranScript/keiran.cc"
+              target="_blank"
+              className="text-primary hover:text-primary/80 underline underline-offset-4"
+            >
               GitHub
             </a>
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
