@@ -2,13 +2,27 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cat, Send, X, Loader2, Volume2, VolumeX, Palette, RotateCcw } from 'lucide-react';
+import {
+  Cat,
+  Send,
+  X,
+  Loader2,
+  Volume2,
+  VolumeX,
+  Palette,
+  RotateCcw,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/components/ui/use-toast';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import ReactMarkdown from 'react-markdown';
 
 interface Message {
@@ -24,8 +38,14 @@ export function AiChat() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [colorChanges, setColorChanges] = useState<Record<string, string> | null>(null);
-  const [pendingColorChanges, setPendingColorChanges] = useState<Record<string, string> | null>(null);
+  const [colorChanges, setColorChanges] = useState<Record<
+    string,
+    string
+  > | null>(null);
+  const [pendingColorChanges, setPendingColorChanges] = useState<Record<
+    string,
+    string
+  > | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,7 +59,7 @@ export function AiChat() {
     if (!input.trim()) return;
 
     const newMessage: Message = { role: 'user', content: input };
-    setMessages(prev => [...prev, newMessage]);
+    setMessages((prev) => [...prev, newMessage]);
     setInput('');
     setIsLoading(true);
 
@@ -58,7 +78,10 @@ export function AiChat() {
       }
 
       const data = await response.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: data.message },
+      ]);
 
       if (data.colorChanges) {
         setPendingColorChanges(data.colorChanges);
@@ -75,8 +98,11 @@ export function AiChat() {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(message);
       const voices = speechSynthesis.getVoices();
-      const femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('female'));
-      
+      const femaleVoice = voices.find(
+        (voice) =>
+          voice.name.includes('Female') || voice.name.includes('female'),
+      );
+
       if (femaleVoice) {
         utterance.voice = femaleVoice;
       }
@@ -146,7 +172,9 @@ export function AiChat() {
           >
             <Card className="border-primary/10 bg-background/80 backdrop-blur-sm">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Chat with MeowAI</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Chat with MeowAI
+                </CardTitle>
                 <div className="flex items-center space-x-2">
                   {pendingColorChanges && (
                     <TooltipProvider>
@@ -255,11 +283,17 @@ export function AiChat() {
                     type="text"
                     placeholder="Type your message..."
                     value={input}
-                    onChange={(e) => setInput(e.target.value.slice(0, MAX_CHAR_LIMIT))}
+                    onChange={(e) =>
+                      setInput(e.target.value.slice(0, MAX_CHAR_LIMIT))
+                    }
                     className="flex-grow mr-2 bg-background/50"
                     maxLength={MAX_CHAR_LIMIT}
                   />
-                  <Button type="submit"   size="icon" disabled={isLoading || !input.trim()}>
+                  <Button
+                    type="submit"
+                    size="icon"
+                    disabled={isLoading || !input.trim()}
+                  >
                     <Send className="h-4 w-4" />
                   </Button>
                 </form>

@@ -17,26 +17,26 @@ const pasteSchema = z.object({
   domain: z.string().min(1).optional(),
 });
 
-  /**
-   * Handles POST requests to the /api/pastes endpoint.
-   *
-   * The request should contain a JSON body with the following properties:
-   *
-   * - `title`: The title of the paste.
-   * - `description`: The description of the paste. Optional.
-   * - `content`: The content of the paste.
-   * - `language`: The language of the paste.
-   * - `expirationTime`: The expiration time of the paste. Optional.
-   * - `domain`: The domain to use for the paste URL. Optional.
-   *
-   * If the request is invalid, or if an error occurs while processing the
-   * request, the response will contain a JSON object with an "error" property
-   * that describes the error. The HTTP status code of the response will be
-   * 400 or 500, depending on the type of error.
-   *
-   * If the request is successful, the response will contain a JSON object with
-   * a single property, `url`, which is the URL of the created paste.
-   */
+/**
+ * Handles POST requests to the /api/pastes endpoint.
+ *
+ * The request should contain a JSON body with the following properties:
+ *
+ * - `title`: The title of the paste.
+ * - `description`: The description of the paste. Optional.
+ * - `content`: The content of the paste.
+ * - `language`: The language of the paste.
+ * - `expirationTime`: The expiration time of the paste. Optional.
+ * - `domain`: The domain to use for the paste URL. Optional.
+ *
+ * If the request is invalid, or if an error occurs while processing the
+ * request, the response will contain a JSON object with an "error" property
+ * that describes the error. The HTTP status code of the response will be
+ * 400 or 500, depending on the type of error.
+ *
+ * If the request is successful, the response will contain a JSON object with
+ * a single property, `url`, which is the URL of the created paste.
+ */
 export async function POST(request: NextRequest) {
   const rateLimitResult = await rateLimit(request);
   if (rateLimitResult) return rateLimitResult;

@@ -14,7 +14,7 @@ import {
   Code,
   Github,
   Music,
-  User
+  User,
 } from 'lucide-react';
 import ThemeSwitcher from '@/components/theme-switcher';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';

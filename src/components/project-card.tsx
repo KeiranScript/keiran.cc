@@ -20,8 +20,8 @@ export function ProjectCard({ project }: { project: Project }) {
       className="border-b last:border-0 pb-6 last:pb-0"
     >
       <h3 className="text-xl font-semibold mb-2">
-        <a 
-          href={project.link} 
+        <a
+          href={project.link}
           className="hover:text-primary transition-colors inline-flex items-center gap-2 group"
           target="_blank"
           rel="noopener noreferrer"
@@ -33,9 +33,9 @@ export function ProjectCard({ project }: { project: Project }) {
       <p className="text-muted-foreground mb-4">{project.description}</p>
       <div className="flex flex-wrap gap-2">
         {project.tech.map((tech) => (
-          <Badge 
-            key={tech} 
-            variant="secondary" 
+          <Badge
+            key={tech}
+            variant="secondary"
             className="text-xs bg-primary/10 hover:bg-primary/20 transition-colors"
           >
             {tech}

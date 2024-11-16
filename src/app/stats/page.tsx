@@ -31,7 +31,10 @@ const StatsContent = ({ stats }: { stats: any }) => {
         {[
           { title: 'Total Files', value: stats.totalFiles },
           { title: 'Used Storage', value: formatBytes(stats.usedStorage) },
-          { title: 'Available Storage', value: formatBytes(stats.availableStorage) },
+          {
+            title: 'Available Storage',
+            value: formatBytes(stats.availableStorage),
+          },
         ].map(({ title, value }, index) => (
           <motion.div
             key={title}
@@ -63,7 +66,8 @@ const StatsContent = ({ stats }: { stats: any }) => {
           <CardContent>
             <Progress value={progressValue} className="w-full" />
             <p className="mt-2 text-sm text-muted-foreground">
-              {formatBytes(stats.usedStorage)} of {formatBytes(stats.totalStorage)} used
+              {formatBytes(stats.usedStorage)} of{' '}
+              {formatBytes(stats.totalStorage)} used
             </p>
           </CardContent>
         </Card>
@@ -91,7 +95,11 @@ const Stats = () => {
     );
   }
 
-  return stats ? <StatsContent stats={stats} /> : <div>Failed to load stats</div>;
+  return stats ? (
+    <StatsContent stats={stats} />
+  ) : (
+    <div>Failed to load stats</div>
+  );
 };
 
 const getStats = async () => {

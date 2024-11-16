@@ -13,15 +13,18 @@ export default function LandingPage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const featuresRef = useRef(null);
-  const isFeaturesInView = useInView(featuresRef, { once: true, margin: "-100px" });
+  const isFeaturesInView = useInView(featuresRef, {
+    once: true,
+    margin: '-100px',
+  });
   const footerRef = useRef(null);
-  const isFooterInView = useInView(footerRef, { once: true, margin: "-100px" });
+  const isFooterInView = useInView(footerRef, { once: true, margin: '-100px' });
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setWindowSize({
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight,
       });
     }
   }, []);
@@ -116,7 +119,10 @@ export default function LandingPage() {
             animate="animate"
           >
             <motion.span variants={titleVariants}>Welcome to </motion.span>
-            <motion.span variants={titleVariants} className="text-primary relative">
+            <motion.span
+              variants={titleVariants}
+              className="text-primary relative"
+            >
               AnonHost
               <span className="absolute -inset-1 bg-primary/10 blur-xl" />
             </motion.span>
@@ -161,30 +167,33 @@ export default function LandingPage() {
             </Link>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             ref={featuresRef}
             className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 mt-32"
             style={{
-              transform: isFeaturesInView ? "none" : "translateY(100px)",
+              transform: isFeaturesInView ? 'none' : 'translateY(100px)',
               opacity: isFeaturesInView ? 1 : 0,
-              transition: "all 0.9s cubic-bezier(0.17, 0.55, 0.55, 1) 0.5s"
+              transition: 'all 0.9s cubic-bezier(0.17, 0.55, 0.55, 1) 0.5s',
             }}
           >
             {[
               {
                 icon: Upload,
                 title: 'Easy Uploads',
-                description: 'Drag and drop or click to upload files up to 1GB.',
+                description:
+                  'Drag and drop or click to upload files up to 1GB.',
               },
               {
                 icon: Shield,
                 title: 'Anonymous Sharing',
-                description: 'No account required. Your privacy is our priority.',
+                description:
+                  'No account required. Your privacy is our priority.',
               },
               {
                 icon: Zap,
                 title: 'Lightning Fast',
-                description: 'Optimized for speed, your files are ready in seconds.',
+                description:
+                  'Optimized for speed, your files are ready in seconds.',
               },
             ].map(({ icon: Icon, title, description }, index) => (
               <motion.div
@@ -193,7 +202,7 @@ export default function LandingPage() {
                   'rounded-xl p-8 shadow-lg border border-primary/10',
                   'backdrop-blur-sm hover:shadow-xl transition-all duration-300',
                   'bg-gradient-to-br from-background/80 to-background/40',
-                  'relative group'
+                  'relative group',
                 )}
                 variants={cardVariants}
                 whileHover="hover"
@@ -202,9 +211,7 @@ export default function LandingPage() {
                 <div className="relative">
                   <Icon className="w-16 h-16 text-primary mb-6" />
                 </div>
-                <h2 className="text-2xl font-bold mb-4 relative">
-                  {title}
-                </h2>
+                <h2 className="text-2xl font-bold mb-4 relative">{title}</h2>
                 <p className="text-muted-foreground text-lg relative">
                   {description}
                 </p>
@@ -217,9 +224,9 @@ export default function LandingPage() {
           ref={footerRef}
           className="text-center py-8 bg-gradient-to-t from-background/80 to-transparent backdrop-blur-sm"
           style={{
-            transform: isFooterInView ? "none" : "translateY(20px)",
+            transform: isFooterInView ? 'none' : 'translateY(20px)',
             opacity: isFooterInView ? 1 : 0,
-            transition: "all 0.6s cubic-bezier(0.17, 0.55, 0.55, 1) 0.3s"
+            transition: 'all 0.6s cubic-bezier(0.17, 0.55, 0.55, 1) 0.3s',
           }}
         >
           <p className="text-sm text-muted-foreground">

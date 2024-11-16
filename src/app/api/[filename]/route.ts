@@ -3,16 +3,16 @@ import { createReadStream } from 'fs';
 import { stat } from 'fs/promises';
 import path from 'path';
 
-  /**
-   * GET /api/[filename]
-   *
-   * Downloads a file from the /public/uploads directory.
-   *
-   * @param {NextRequest} request - The request object.
-   * @param {Object} { params } - The route parameter object.
-   * @param {string} params.filename - The filename to download.
-   * @return {NextResponse} The response object.
-   */
+/**
+ * GET /api/[filename]
+ *
+ * Downloads a file from the /public/uploads directory.
+ *
+ * @param {NextRequest} request - The request object.
+ * @param {Object} { params } - The route parameter object.
+ * @param {string} params.filename - The filename to download.
+ * @return {NextResponse} The response object.
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: { filename: string } },

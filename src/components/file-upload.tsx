@@ -31,12 +31,7 @@ import {
 
 const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB in bytes
 
-const DOMAINS = [
-  'keiran.cc',
-  'e-z.software',
-  'keirandev.me',
-  'keiran.tech',
-];
+const DOMAINS = ['keiran.cc', 'e-z.software', 'keirandev.me', 'keiran.tech'];
 
 export default function FileUpload({
   setToast,
@@ -47,7 +42,9 @@ export default function FileUpload({
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [localUploadedFileUrl, setLocalUploadedFileUrl] = useState<string | null>(null);
+  const [localUploadedFileUrl, setLocalUploadedFileUrl] = useState<
+    string | null
+  >(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [rawUrl, setRawUrl] = useState<string | null>(null);
   const [buttonLabel, setButtonLabel] = useState('Upload');
@@ -204,7 +201,9 @@ export default function FileUpload({
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 ${
-            isDragActive ? 'border-primary bg-primary/5' : 'border-muted hover:border-primary/50'
+            isDragActive
+              ? 'border-primary bg-primary/5'
+              : 'border-muted hover:border-primary/50'
           }`}
         >
           <input {...getInputProps()} />

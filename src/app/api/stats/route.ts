@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching storage stats:', error);
     return NextResponse.json(
       { error: 'Failed to fetch storage stats', url: request.url },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

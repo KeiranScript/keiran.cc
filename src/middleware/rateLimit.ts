@@ -38,7 +38,9 @@ const routeConfigs: { [key: string]: RateLimitConfig } = {
 };
 
 export async function rateLimit(request: NextRequest) {
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1';
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    '127.0.0.1';
   const path = request.nextUrl.pathname;
 
   const config = routeConfigs[path];
@@ -54,15 +56,15 @@ export async function rateLimit(request: NextRequest) {
         ip,
         path,
         timestamp: {
-          gt: blacklistWindowStart
-        }
-      }
+          gt: blacklistWindowStart,
+        },
+      },
     });
 
     if (blacklistCount >= config.blacklistThreshold) {
       return NextResponse.json(
         { error: 'You have been blacklisted from this service' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -71,9 +73,9 @@ export async function rateLimit(request: NextRequest) {
         ip,
         path,
         timestamp: {
-          gt: windowStart
-        }
-      }
+          gt: windowStart,
+        },
+      },
     });
 
     if (requestCount >= config.limit) {
@@ -81,30 +83,27 @@ export async function rateLimit(request: NextRequest) {
         data: {
           ip,
           path,
-          timestamp: now
-        }
+          timestamp: now,
+        },
       });
-      
-      return NextResponse.json(
-        { error: 'Too many requests' },
-        { status: 429 }
-      );
+
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
 
     await prisma.requestLog.create({
       data: {
         ip,
         path,
-        timestamp: now
-      }
+        timestamp: now,
+      },
     });
 
     await prisma.requestLog.deleteMany({
       where: {
         timestamp: {
-          lt: windowStart
-        }
-      }
+          lt: windowStart,
+        },
+      },
     });
 
     return null;

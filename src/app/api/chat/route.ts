@@ -50,7 +50,9 @@ export async function POST(request: NextRequest) {
     for (const msg of messages) {
       if (msg.content.length > MAX_CHAR_LIMIT) {
         return NextResponse.json(
-          { error: `Message exceeds the maximum character limit of ${MAX_CHAR_LIMIT}.` },
+          {
+            error: `Message exceeds the maximum character limit of ${MAX_CHAR_LIMIT}.`,
+          },
           { status: 400 },
         );
       }

@@ -4,17 +4,17 @@ import { motion } from 'framer-motion';
 import { Github, Mail } from 'lucide-react';
 
 const socialLinks = [
-  { 
-    icon: Github, 
-    href: 'https://github.com/KeiranScript', 
+  {
+    icon: Github,
+    href: 'https://github.com/KeiranScript',
     label: 'GitHub',
-    color: 'hover:text-[#2ea043]'
+    color: 'hover:text-[#2ea043]',
   },
-  { 
-    icon: Mail, 
-    href: 'mailto:keiranscript@gmail.com', 
+  {
+    icon: Mail,
+    href: 'mailto:keiranscript@gmail.com',
     label: 'Email',
-    color: 'hover:text-[#ea4335]'
+    color: 'hover:text-[#ea4335]',
   },
 ];
 

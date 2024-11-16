@@ -137,7 +137,7 @@ export default function DiscordPresence({ userId }: { userId: string }) {
   };
 
   const customStatus = presence.activities.find(
-    (activity) => activity.type === 4
+    (activity) => activity.type === 4,
   );
 
   return (
@@ -154,14 +154,16 @@ export default function DiscordPresence({ userId }: { userId: string }) {
               </Avatar>
               <span
                 className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${getStatusColor(
-                  presence.discord_status
+                  presence.discord_status,
                 )} border-2 border-background`}
               />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <p className="font-medium text-lg">
-                  {presence.discord_user.display_name || presence.discord_user.global_name || presence.discord_user.username}
+                  {presence.discord_user.display_name ||
+                    presence.discord_user.global_name ||
+                    presence.discord_user.username}
                 </p>
                 {getDeviceIcon() && (
                   <span className="text-sm">{getDeviceIcon()}</span>
