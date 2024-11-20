@@ -21,7 +21,13 @@ export async function POST(request: NextRequest) {
     }
 
     const filename = generateUniqueFilename(file.name);
-    const chunksDir = path.join(process.cwd(), 'public', 'uploads', 'chunks', filename);
+    const chunksDir = path.join(
+      process.cwd(),
+      'public',
+      'uploads',
+      'chunks',
+      filename,
+    );
     await fsPromises.mkdir(chunksDir, { recursive: true });
 
     const fileStream = file.stream();
@@ -31,20 +37,23 @@ export async function POST(request: NextRequest) {
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      
+
       const chunkFilename = `chunk-${chunkIndex}`;
       const chunkPath = path.join(chunksDir, chunkFilename);
       await fsPromises.writeFile(chunkPath, value);
       chunkIndex++;
     }
-    
-    const finalizeResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/upload-finalize`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+
+    const finalizeResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/upload-finalize`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ filename }),
       },
-      body: JSON.stringify({ filename }),
-    });
+    );
 
     if (!finalizeResponse.ok) {
       throw new Error('Failed to finalize file upload');
